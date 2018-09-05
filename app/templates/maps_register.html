@@ -19,13 +19,29 @@
   </head>
   <body>
     <div class="container">
-        <h1>Adam Young</h1>
+        <h1>Patient Registration</h1>
         <form method="POST">
                 {{ form.csrf_token }}
-            <div class="form-group"> <!-- Full Name -->
-                <label for="name" class="control-label">Name</label>
-                <input type="text" class="form-control" id="name" name="name" placeholder="Name"/>
-              {% for message in form.name.errors %}
+            <div class="form-group"> <!-- First Name -->
+                <label for="fname" class="control-label">First Name</label>
+                <input type="text" class="form-control" id="fname" name="fname" placeholder="First Name"/>
+              {% for message in form.fname.errors %}
+                 <div style="color: red">{{ message }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="form-group"> <!-- Last Name -->
+                <label for="lname" class="control-label">Last Name</label>
+                <input type="text" class="form-control" id="lname" name="lname" placeholder="Last Name"/>
+              {% for message in form.lname.errors %}
+                 <div style="color: red">{{ message }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="form-group"> <!-- Phone -->
+                <label for="phone" class="control-label">Phone Number</label>
+                <input type="text" class="form-control" id="phone" name="phone" placeholder="0412345678"/>
+              {% for message in form.phone.errors %}
                  <div style="color: red">{{ message }}</div>
               {% endfor %}
             </div>
@@ -40,12 +56,61 @@
 
             <div class="form-group"> <!-- DOB-->
                 <label for="dob_id" class="control-label">dob</label>
-                <input type="text" class="form-control" id="dob_id" name="dob" placeholder="dd/mm/yyyy">
+                <input type="date" class="form-control" id="dob_id" name="dob" placeholder="dd/mm/yyyy">
               {% for message in form.dob.errors %}
                  <div style="color: red">{{ message }}</div>
               {% endfor %}
             </div>
-            <input type="submit" value="Register">
+            
+            <div class="form-group"> <!-- Gender -->
+                <label for="gender" class="control-label">Gender</label>
+                <select class="form-control" id="gender" name="gender" placeholder="Gender">
+                    <option disabled selected>Gender</option>
+                    {% for key, value in genders.items() %}
+                        <option value={{ key }}>{{ value }}</option>
+                    {% endfor %}
+                </select>
+              {% for message in form.gender.errors %}
+                 <div style="color: red">{{ message }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="form-group"> <!-- Address -->
+                <label for="address" class="control-label">Address</label>
+                <input type="text" class="form-control" id="address" name="address" placeholder="1 High Street"/>
+              {% for message in form.address.errors %}
+                 <div style="color: red">{{ message }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="form-group"> <!-- City -->
+                <label for="city" class="control-label">City</label>
+                <input type="text" class="form-control" id="city" name="city" placeholder="Melbourne"/>
+              {% for message in form.city.errors %}
+                 <div style="color: red">{{ message }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="form-group"> <!-- State -->
+                <label for="name" class="control-label">State</label>
+                <select class="form-control" id="state" name="state" placeholder="state">
+                    <option disabled selected>State</option>
+                    {% for key, value in states.items() %}
+                        <option value={{ key }}>{{ value }}</option>
+                    {% endfor %}
+                </select>
+              {% for message in form.state.errors %}
+                 <div style="color: red">{{ message }}</div>
+              {% endfor %}
+            </div>
+            <div class="form-group"> <!-- Post code -->
+                <label for="postcode" class="control-label">Post Code</label>
+                <input type="text" class="form-control" id="postcode" name="postcode" placeholder="3000"/>
+              {% for message in form.postcode.errors %}
+                 <div style="color: red">{{ message }}</div>
+              {% endfor %}
+            </div>
+            <input type="submit" class='btn btn-primary' value="Register">
         </form>
     </div>
 
