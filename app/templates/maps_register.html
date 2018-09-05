@@ -20,97 +20,28 @@
   <body>
     <div class="container">
         <h1>Patient Registration</h1>
+        {% from "_formhelper.html" import render_field %}
         <form method="POST">
                 {{ form.csrf_token }}
-            <div class="form-group"> <!-- First Name -->
-                <label for="fname" class="control-label">First Name</label>
-                <input type="text" class="form-control" id="fname" name="fname" placeholder="First Name"/>
-              {% for message in form.fname.errors %}
-                 <div style="color: red">{{ message }}</div>
-              {% endfor %}
-            </div>
+                {{ render_field(form.fname) }}
+                {{ render_field(form.lname) }}
+                {{ render_field(form.phone) }}
+                {{ render_field(form.email) }}
+                {{ render_field(form.dob) }}
+                {{ render_field(form.gender) }}
+                {{ render_field(form.address) }}
+                {{ render_field(form.city) }}
+                {{ render_field(form.state) }}
+                {{ render_field(form.postcode) }}
 
-            <div class="form-group"> <!-- Last Name -->
-                <label for="lname" class="control-label">Last Name</label>
-                <input type="text" class="form-control" id="lname" name="lname" placeholder="Last Name"/>
-              {% for message in form.lname.errors %}
-                 <div style="color: red">{{ message }}</div>
-              {% endfor %}
+            <div class='form-group'>
+                <div class='text-left'>
+                    <input type="submit" class='btn btn-primary' value="Register">
+                </div>
+                <div class='text-right'>
+                    <a href="/bookings" class="btn btn-primary">Already Registered</a>
+                </div>
             </div>
-
-            <div class="form-group"> <!-- Phone -->
-                <label for="phone" class="control-label">Phone Number</label>
-                <input type="text" class="form-control" id="phone" name="phone" placeholder="0412345678"/>
-              {% for message in form.phone.errors %}
-                 <div style="color: red">{{ message }}</div>
-              {% endfor %}
-            </div>
-
-            <div class="form-group"> <!-- Email-->
-                <label for="email_id" class="control-label">Email</label>
-                <input type="text" class="form-control" id="email_id" name="email" placeholder="">
-              {% for message in form.email.errors %}
-                 <div style="color: red">{{ message }}</div>
-              {% endfor %}
-            </div>
-
-            <div class="form-group"> <!-- DOB-->
-                <label for="dob_id" class="control-label">dob</label>
-                <input type="date" class="form-control" id="dob_id" name="dob" placeholder="dd/mm/yyyy">
-              {% for message in form.dob.errors %}
-                 <div style="color: red">{{ message }}</div>
-              {% endfor %}
-            </div>
-            
-            <div class="form-group"> <!-- Gender -->
-                <label for="gender" class="control-label">Gender</label>
-                <select class="form-control" id="gender" name="gender" placeholder="Gender">
-                    <option disabled selected>Gender</option>
-                    {% for key, value in genders.items() %}
-                        <option value={{ key }}>{{ value }}</option>
-                    {% endfor %}
-                </select>
-              {% for message in form.gender.errors %}
-                 <div style="color: red">{{ message }}</div>
-              {% endfor %}
-            </div>
-
-            <div class="form-group"> <!-- Address -->
-                <label for="address" class="control-label">Address</label>
-                <input type="text" class="form-control" id="address" name="address" placeholder="1 High Street"/>
-              {% for message in form.address.errors %}
-                 <div style="color: red">{{ message }}</div>
-              {% endfor %}
-            </div>
-
-            <div class="form-group"> <!-- City -->
-                <label for="city" class="control-label">City</label>
-                <input type="text" class="form-control" id="city" name="city" placeholder="Melbourne"/>
-              {% for message in form.city.errors %}
-                 <div style="color: red">{{ message }}</div>
-              {% endfor %}
-            </div>
-
-            <div class="form-group"> <!-- State -->
-                <label for="name" class="control-label">State</label>
-                <select class="form-control" id="state" name="state" placeholder="state">
-                    <option disabled selected>State</option>
-                    {% for key, value in states.items() %}
-                        <option value={{ key }}>{{ value }}</option>
-                    {% endfor %}
-                </select>
-              {% for message in form.state.errors %}
-                 <div style="color: red">{{ message }}</div>
-              {% endfor %}
-            </div>
-            <div class="form-group"> <!-- Post code -->
-                <label for="postcode" class="control-label">Post Code</label>
-                <input type="text" class="form-control" id="postcode" name="postcode" placeholder="3000"/>
-              {% for message in form.postcode.errors %}
-                 <div style="color: red">{{ message }}</div>
-              {% endfor %}
-            </div>
-            <input type="submit" class='btn btn-primary' value="Register">
         </form>
     </div>
 
