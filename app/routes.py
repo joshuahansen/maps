@@ -19,3 +19,7 @@ def index():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     return forms.maps_register()
+
+@app.route('/bookings', methods=['GET', 'POST'])
+def book():
+    return forms.maps_bookings()
