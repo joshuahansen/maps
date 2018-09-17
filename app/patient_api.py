@@ -35,6 +35,7 @@ class Patient(db.Model):
     phone = db.Column(db.String(20))
     email = db.Column(db.String(80))
     gender = db.Column(db.String(10))
+    dob = db.Column(db.String(20))
     address = db.Column(db.String(100))
     city = db.Column(db.String(100))
     state = db.Column(db.String(80))
@@ -97,7 +98,7 @@ def add_patient(request):
     postcode = request.json['postcode']
 
     new_patient = Patient(firstname, lastname, phone, email,
-                    gender, address, city, state, postcode)
+                    gender, dob, address, city, state, postcode)
 
     db.session.add(new_patient)
     db.session.commit()
@@ -130,5 +131,8 @@ def delete_patient(patient_id):
 
     return response
 
+# Uncomment to delete all tables in database
+#db.drop_all()
 
+# Uncomment to add all tables to the database
 #db.create_all()
