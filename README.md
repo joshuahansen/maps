@@ -17,6 +17,10 @@ virtualenv venv
 # activate the virtual environment.
 source venv/bin/activate
 
+# install mysql client on raspberry pi
+sudo apt update
+sudo apt install default-libmysqlclient-dev
+
 # install project dependancies (into your local virtual environment)
 pip3 install -r requirements.txt
 
