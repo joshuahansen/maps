@@ -41,13 +41,14 @@ class Patient(db.Model):
     postcode = db.Column(db.String(10))
 
     def __init__(self, firstname, lastname, phone, email,
-                    gender, address, city, state, postcode):
+                    gender, dob, address, city, state, postcode):
         '''Initialize Patient class'''
         self.firstname = firstname
         self.lastname = lastname
         self.phone = phone
         self.email = email
         self.gender = gender
+        self.dob = dob
         self.address = address
         self.city = city
         self.state = state
@@ -57,7 +58,7 @@ class PatientSchema(ma.Schema):
     class Meta:
         '''Fields to expose'''
         fields = ('id', 'firstname', 'lastname', 'phone', 'email',
-            'gender', 'address', 'city', 'state', 'postcode')
+            'gender', 'dob', 'address', 'city', 'state', 'postcode')
 
 
 patient_schema = PatientSchema()
@@ -89,6 +90,7 @@ def add_patient(request):
     phone = request.json['phone']
     email = request.json['email']
     gender = request.json['gender']
+    dob = request.json['dob']
     address = request.json['address']
     city = request.json['city']
     state = request.json['state']
