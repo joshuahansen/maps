@@ -12,6 +12,7 @@ import MySQLdb.cursors
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from app import app
+from app.database_tables.patient import Patient, PatientSchema
 
 
 config = configparser.ConfigParser()
@@ -27,40 +28,6 @@ if 'gcpMySQL' in config:
 
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
-
-class Patient(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    firstname = db.Column(db.String(80))
-    lastname = db.Column(db.String(80))
-    phone = db.Column(db.String(20))
-    email = db.Column(db.String(80))
-    gender = db.Column(db.String(10))
-    dob = db.Column(db.String(20))
-    address = db.Column(db.String(100))
-    city = db.Column(db.String(100))
-    state = db.Column(db.String(80))
-    postcode = db.Column(db.String(10))
-
-    def __init__(self, firstname, lastname, phone, email,
-                    gender, dob, address, city, state, postcode):
-        '''Initialize Patient class'''
-        self.firstname = firstname
-        self.lastname = lastname
-        self.phone = phone
-        self.email = email
-        self.gender = gender
-        self.dob = dob
-        self.address = address
-        self.city = city
-        self.state = state
-        self.postcode = postcode
-
-class PatientSchema(ma.Schema):
-    class Meta:
-        '''Fields to expose'''
-        fields = ('id', 'firstname', 'lastname', 'phone', 'email',
-            'gender', 'dob', 'address', 'city', 'state', 'postcode')
-
 
 patient_schema = PatientSchema()
 patient_schema = PatientSchema(many=True)
@@ -131,6 +98,10 @@ def delete_patient(patient_id):
 
     return response
 
+def test():
+    response = jsonify({"data": "Test API call without database"})
+    response.status_code = 200
+    return response
 # Uncomment to delete all tables in database
 #db.drop_all()
 
