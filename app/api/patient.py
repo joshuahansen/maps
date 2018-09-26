@@ -11,6 +11,11 @@ import configparser
 import MySQLdb.cursors
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
+from datetime import datetime
+from datetime import timedelta
+from googleapiclient.discovery import build
+from httplib2 import Http
+from oauth2client import file, client, tools
 from app import app
 from app.database_tables.patient import Patient, PatientSchema
 
@@ -94,6 +99,58 @@ def delete_patient(patient_id):
     db.session.commit()
     
     response = jsonify({"status": "Successful", "action": "delete", "id": patient_id})
+    response.status_code = 200
+
+    return response
+
+def make_appointment(request):
+    # If modifying these scopes, delete the file token.json.
+    SCOPES = 'https://www.googleapis.com/auth/calendar'
+    store = file.Storage('token.json')
+    creds = store.get()
+    if not creds or creds.invalid:
+        flow = client.flow_from_clientsecrets('calendar-config.json', SCOPES)
+        creds = tools.run_flow(flow, store)
+    service = build('calendar', 'v3', http=creds.authorize(Http()))
+    
+    '''Add  a new patient to the database'''
+    patientID = request.json['patientid']
+    startDate = request.json['startDate']
+    endDate = request.json['endDate']
+    doctor = request.json['doctor']
+    description = request.json['description']
+    summary = request.json['summary']
+    location = request.json['location']
+
+    time_start = "{}".format(startDate)
+    time_end   = "{}".format(endDate)
+    event = {
+        'summary': summary,
+        'location': location,
+        'description': description,
+        'start': {
+            'dateTime': time_start,
+            'timeZone': 'Australia/Melbourne',
+        },
+        'end': {
+            'dateTime': time_end,
+            'timeZone': 'Australia/Melbourne',
+        },
+        'reminders': {
+            'useDefault': False,
+            'overrides': [
+                {'method': 'email', 'minutes': 5},
+                {'method': 'popup', 'minutes': 10},
+            ],
+        },
+        'attendees': [
+            {'email': doctor}
+        ]
+    }
+    event = service.events().insert(calendarId='primary', body=event).execute()
+    print('Event created: {}'.format(event.get('htmlLink')))
+
+    response = jsonify({"status": "Successful", "action": "make-appointment", "id": patientID})
     response.status_code = 200
 
     return response

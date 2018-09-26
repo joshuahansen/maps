@@ -36,6 +36,10 @@ def update_patient():
     print("UPDATE PATIENT")
     return api.update_patient(request.args.get('id'), request.json)
 
+@app.route('/api/patient/make-appointment/', methods=['POST'])
+def make_appointment():
+    return api.make_appointment(request)
+
 @app.route('/test', methods=['GET'])
 def test():
     return api.test()
