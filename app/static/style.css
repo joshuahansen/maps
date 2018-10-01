@@ -1,0 +1,76 @@
+.my-nav {
+  height: 80px;
+  width: 100%;
+  background-color: #3498db;
+  border:0;
+}
+
+.nav-title {
+  margin: 0 auto;
+  font-weight: 400;
+  font-size: 45px;
+  padding-top: 14px;
+  padding-left: 50px;
+  color:  white;
+  font-family: 'Lucida Console', Monaco, monospace;
+}
+
+.navbar-title:hover {
+   text-decoration: none;
+}
+
+body {
+  margin: 0;
+}
+
+.nav >li >a {
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+
+.my-li >a:hover, .my-li >a:focus {
+  color: #2980b9;
+}
+
+.my-li {
+  width: 150px;
+  text-align: center;
+}
+
+.my-li >a {
+  color: white;
+  font-family: 'Lucida Console', Monaco, monospace;
+}
+
+.table-header {
+  height: 50px;
+  width: 100%;
+  background-color: #3498db;
+  display: flex;
+  align-items: center;
+  border:0;
+}
+
+.table-title {
+  font-size: 20px;
+  color:  white;
+  font-family: 'Lucida Console', Monaco, monospace;
+  margin-bottom: 0;
+  margin-left: 20px; 
+}
+
+.table-wrapper {
+  width: 1000px;
+  margin: 0 auto;
+  margin-top: 50px;
+}
+
+.my-btn {
+  width: 100px;
+  background-color: #3498db;
+  border: 0;
+}
+
+.btn-td {
+  width: 150px;
+}

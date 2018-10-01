@@ -1,6 +1,6 @@
 ##
 # Medical Appointment System (MAPS) - IoT Sem2 2018
-# 
+#
 # Forms file, handles form service requests
 #
 # Authors: Adam Young, Joshua Hansen, Lohgan Nashm, Zach Wingrave
@@ -28,14 +28,14 @@ class MapsRegister(FlaskForm):
     )
     address = StringField('Address', validators=[DataRequired()])
     city = StringField('City', validators=[DataRequired()])
-    state = SelectField('State', 
-        validators=[DataRequired()], 
+    state = SelectField('State',
+        validators=[DataRequired()],
         choices=[
             ('vic', 'VIC'),
             ('nsw', 'NSW'),
             ('act', 'ACT'),
             ('qld', 'QLD'),
-            ('nt', 'NT'), 
+            ('nt', 'NT'),
             ('wa', 'WA'),
             ('sa', 'SA'),
             ('tas', 'TAS')
@@ -45,9 +45,8 @@ class MapsRegister(FlaskForm):
 
 def maps_register():
     form = MapsRegister()
-    
+
     if form.validate_on_submit():
         return "<h2>Registered Successfully!</h2>"
 
     return render_template('maps_register.html', form=form)
-
