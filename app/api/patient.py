@@ -31,6 +31,9 @@ if 'gcpMySQL' in config:
 
     app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://{}:{}@{}/{}'.format(USER,PASS,HOST,DBNAME)
 
+if 'googleCalendar' in config:
+    mapsCalendarID = config['googleCalendar']['calendarID']
+
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
@@ -147,7 +150,7 @@ def make_appointment(request):
             {'email': doctor}
         ]
     }
-    event = service.events().insert(calendarId='primary', body=event).execute()
+    event = service.events().insert(calendarId=mapsCalendarID, body=event).execute()
     print('Event created: {}'.format(event.get('htmlLink')))
 
     response = jsonify({"status": "Successful", "action": "make-appointment", "id": patientID})

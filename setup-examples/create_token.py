@@ -9,7 +9,7 @@ from oauth2client import file, client, tools
 def main():
     # If modifying these scopes, delete the file token.json.
     SCOPES = 'https://www.googleapis.com/auth/calendar'
-    store = file.Storage('token.json')
+    store = file.Storage('../token.json')
     creds = store.get()
     if not creds or creds.invalid:
         flow = client.flow_from_clientsecrets('calendar-config.json', SCOPES)
