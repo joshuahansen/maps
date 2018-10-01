@@ -148,7 +148,8 @@ def make_appointment(request):
         },
         'attendees': [
             {'email': doctor}
-        ]
+        ],
+        'transparency': 'opaque'
     }
     event = service.events().insert(calendarId=mapsCalendarID, body=event).execute()
     print('Event created: {}'.format(event.get('htmlLink')))
@@ -158,6 +159,44 @@ def make_appointment(request):
 
     return response
 
+def get_availibility(request):
+    '''
+    Return availibility of doctors on certain day
+    '''
+    # If modifying these scopes, delete the file token.json.
+    SCOPES = 'https://www.googleapis.com/auth/calendar'
+    store = file.Storage('token.json')
+    creds = store.get()
+    if not creds or creds.invalid:
+        flow = client.flow_from_clientsecrets('calendar-config.json', SCOPES)
+        creds = tools.run_flow(flow, store)
+    service = build('calendar', 'v3', http=creds.authorize(Http()))
+    
+    startDate = request.json['startDate']
+    endDate = request.json['endDate']
+    
+    start_time = "{}".format(startDate)
+    end_time = "{}".format(endDate)
+    
+    freebusy = {
+            "timeMin": start_time,
+            "timeMax": end_time,
+            "items": [
+                {
+                    "id": mapsCalendarID
+                }
+            ],
+            "timeZone": "Australia/Melbourne"
+        }
+    
+    freebusyResponse = service.freebusy().query(body=freebusy).execute()
+
+    print(freebusyResponse)
+
+    response = jsonify(freebusyResponse['calendars'][mapsCalendarID]['busy'])
+    response.status_code = 200
+    return response
+    
 def test():
     response = jsonify({"data": "Test API call without database"})
     response.status_code = 200
