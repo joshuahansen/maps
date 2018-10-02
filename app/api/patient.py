@@ -158,7 +158,7 @@ def make_appointment(request):
         },
         'attendees': [
             {
-                'email': doctor_result.email
+                'email': doctor_result.email,
                 'email': patient_result.email
             }
         ],
