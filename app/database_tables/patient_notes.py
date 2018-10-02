@@ -28,16 +28,18 @@ ma = Marshmallow(app)
 
 class PatientNotes(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    patient_id = db.Column(db.Integer)
     notes = db.Column(db.Text)
     diagnostics = db.Column(db.Text)
 
     def __init__(self, id, notes, diagnostics):
         '''Initialize Patient class'''
         self.id = id
+        self.patient_id = patient_id
         self.notes = notes
         self.diagnostics = diagnostics
 
 class PatientNotesSchema(ma.Schema):
     class Meta:
         '''Fields to expose'''
-        fields = ('id', 'notes', 'diagnostics')
+        fields = ('id', 'patient_note', 'notes', 'diagnostics')
