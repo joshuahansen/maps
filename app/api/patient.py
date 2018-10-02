@@ -19,6 +19,7 @@ from oauth2client import file, client, tools
 from app import app
 from app.database_tables.patient import Patient, PatientSchema
 from app.database_tables.doctor import Doctor, DoctorSchema
+from app.database_tables.appointment import Appointment, AppointmentSchema
 
 
 config = configparser.ConfigParser()
@@ -138,6 +139,11 @@ def make_appointment(request):
 
     time_start = "{}".format(startDate)
     time_end   = "{}".format(endDate)
+
+    new_appointment = Appointment(patient_id, doctor_id, time_start, time_end)
+    db.session.add(new_appointment)
+    db.session.commit()
+    
     event = {
         'summary': summary,
         'location': location,
