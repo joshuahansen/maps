@@ -30,16 +30,18 @@ ma = Marshmallow(app)
 class Appointments(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     patientID = db.Column(db.Integer)
-    DoctorID = db.Column(db.Integer)
-    dateTime = db.Column(db.DateTime)
+    doctorID = db.Column(db.Integer)
+    startDateTime = db.Column(db.DateTime)
+    endDateTime = db.Column(db.DateTime)
 
-    def __init__(self, patientID, doctorID, dateTime):
+    def __init__(self, patientID, doctorID, startDate, endDate):
         '''Initialize Patient class'''
         self.patientID = patientID
         self.doctorID = doctorID
-        self.dateTime = dateTime
+        self.startDateTime = startDate
+        seld.endDateTime = endDate
 
 class AppointmentSchema(ma.Schema):
     class Meta:
         '''Fields to expose'''
-        fields = ('id', 'patientID', 'doctorID', 'dateTime')
+        fields = ('id', 'patientID', 'doctorID', 'startDateTime', 'endDateTime')
