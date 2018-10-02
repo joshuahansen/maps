@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+  <title>MAPS | Doctor Dashboard</title>
+
+  <!-- Bootstrap -->
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+
+  <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+  <div class="wrapper">
+    <nav class="navbar navbar-static-top my-nav">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-title">
+              <h1 class="nav-title">MAPS</h1>
+            </a>
+        </div>
+
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li class="my-li"><a href="#">Home</a></li>
+            <li class="my-li"><a href="#">Doctor</a></li>
+            <li class="my-li"><a href="#">Patient</a></li>
+            <li class="my-li"><a href="#">Clerk</a></li>
+          </ul>
+        </div>
+    </nav>
+  </div>
+  </div>
+
+  <div class="table-wrapper">
+    <div class="table-header">
+      <p class="table-title">Patient History</p>
+    </div>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Name</th>
+          <th scope="col">D.O.B</th>
+          <th scope="col">Last Visit</th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">1</th>
+          <td>Lohgan Nash</td>
+          <td>04/11/1997</td>
+          <td>01/09/2018</td>
+          <td class="btn-td">
+            <input class="btn btn-primary my-btn" type="button" value="View">
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+</body>
+
+</html>
