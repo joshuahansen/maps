@@ -17,7 +17,8 @@ from googleapiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file, client, tools
 from app import app
-from app.database_tables.patient import Patient, PatientSchema, Doctor, DoctorSchema
+from app.database_tables.patient import Patient, PatientSchema
+from app.database_tables.doctor import Doctor, DoctorSchema
 
 
 config = configparser.ConfigParser()
