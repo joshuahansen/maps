@@ -125,13 +125,8 @@ def add_appointment(request):
     response.status_code = 200
     return response
 
-# def get_appointments_master(request):
-#     """Gets appointments specified by request parameters."""
-#     response.status_code = 200
-#     return response
-
 def get_appointments_by_id(request):
-    """Reads all future appointments in the calendar.
+    """Reads all appointments for a particular ID.
 
     @param request is a single variable representing the appointment ID.
     @return a json object containing all corresponding database records.
@@ -163,7 +158,7 @@ def get_appointments_by_patient(request):
     return response
 
 def get_appointments_by_doctor(request):
-    """Reads all future appointments in the calendar.
+    """Reads all appointments for a particular doctor.
 
     @param request is a single variable representing the doctor ID.
     @return a json object containing all corresponding database records.

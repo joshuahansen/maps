@@ -11,4 +11,4 @@ from flask import Flask
 
 app = Flask(__name__)
 
-from app.routes import routes, patient_api
+from app.routes import routes, patient_api, clerk_api
