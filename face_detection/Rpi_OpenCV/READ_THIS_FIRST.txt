@@ -1,0 +1,14 @@
+NOTE:
+
+You may use this code towards specification XIII of Assignment 2.
+HOWEVER, in order to  get full 15 marks, you must add the following features to this code archive/functionality:
+
+1. 
+   You must associate particular patient to a set of images. 
+   This means you need to train the facial recognition system to recognise images of multiple patients.
+
+2.
+   The success/failure as a result of facial recognition should be displayed on SENSE HAT, 
+   as an example: 'Green' colour for success and 'Red' for failure.
+
+Plainly using the code given to you will fetch you a maximum of 5 marks out of 15.
