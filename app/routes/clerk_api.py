@@ -11,21 +11,21 @@ from app import app
 from app.api import clerk as api
 
 @app.route('/api/clerk/', methods=['POST'])
-def create():
-    return None
+def add_appointment():
+    return api.add_appointment(request)
 
-@app.route('/api/clerk/', methods=['GET'])
-def read():
-    return None
-
-@app.route('/api/clerk/', methods=['PUT'])
-def update():
-    return None
-    # Needed?
+@app.route('/api/clerk/', methods=['POST'])
+def get_appointments():
+    if request.args.get('id'):
+        return api.get_appointment_by_doctor(request.args.get('id'))
+    elif request.args.get('patientID'):
+        return api.get_appointment_by_doctor(request.args.get('patientID'))
+    elif request.args.get('doctorID'):
+        return api.get_appointment_by_doctor(request.args.get('doctorID'))
 
 @app.route('/api/clerk/', methods=['DELETE'])
-def delete():
-    return None
+def delete_appointment():
+    return api.delete_appointment(request)
 
 @app.route('/test', methods=['GET'])
 def test():
