@@ -12,7 +12,6 @@
   <!-- Bootstrap -->
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 
-  <link rel="stylesheet" type="text/css" href="../static/style.css">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
 
   <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -26,7 +25,7 @@
 
     function loadTable() {
 
-        const app = document.getElementById('mytb');
+        const table = document.getElementById('mytb');
 
         var request = new XMLHttpRequest();
         request.open('GET', 'http://192.168.0.13:5000/api/patient', true);
@@ -54,11 +53,26 @@
               const dob = document.createElement('td');
               dob.textContent = patient.dob;
 
-              mytb.appendChild(row);
+              const button = document.createElement('td');
+              button.setAttribute('class', 'btn-td');
+
+              const input = document.createElement('button');
+              input.setAttribute('class', 'btn btn-primary my-btn');
+              input.setAttribute('type', 'button');
+              input.setAttribute('value', patient.id);
+              input.setAttribute('data-toggle', 'modal');
+              input.setAttribute('data-target', '#mymodal');
+              input.setAttribute('onclick', 'loadModal(this.value);');
+
+              input.textContent = 'View';
+
+              table.appendChild(row);
               row.appendChild(id);
               row.appendChild(name);
               row.appendChild(email);
               row.appendChild(dob);
+              row.appendChild(button);
+              button.appendChild(input);
 
             });
 
@@ -71,6 +85,53 @@
       }
 
       window.onload = loadTable;
+
+      function loadModal(val) {
+
+        const body = document.getElementById('modal-b');
+
+        var url =  "http://192.168.0.13:5000/api/patient/?id="
+        var fullURL = url.concat(val);
+
+        var request = new XMLHttpRequest();
+        request.open('GET', fullURL, true);
+        request.onload = function () {
+
+
+        var data = JSON.parse(this.response);
+
+        if (request.status >= 200 && request.status < 400) {
+
+          data.forEach(patient => {
+          const title = document.getElementById('modal-t');
+          title.textContent = patient.firstname;
+
+          const address = document.createElement('p');
+          address.textContent = patient.address;
+          const dob = document.createElement('p');
+          dob.textContent = patient.dob;
+          const gender = document.createElement('p');
+          gender.textContent = patient.gender;
+          const email = document.createElement('p');
+          email.textContent = patient.email;
+          const phone = document.createElement('p');
+          phone.textContent = patient.phone;
+
+          body.appendChild(address);
+          body.appendChild(dob);
+          body.appendChild(gender);
+          body.appendChild(email);
+          body.appendChild(phone);
+        });
+
+        } else {
+          console.log('error');
+        }
+
+      }
+        request.send();
+
+      }
 
     </script>
 </head>
@@ -121,8 +182,8 @@
         <tr>
           <th scope="col">#</th>
           <th scope="col">Name</th>
+          <th scope="col">Email</th>
           <th scope="col">D.O.B</th>
-          <th scope="col">Last Visit</th>
           <th scope="col"></th>
         </tr>
       </thead>
@@ -130,15 +191,49 @@
         <tr>
           <th scope="row">1</th>
           <td>Lohgan Nash</td>
+          <td>lohgannash@gmail.com</td>
           <td>04/11/1997</td>
-          <td>01/09/2018</td>
           <td class="btn-td">
-            <input class="btn btn-primary my-btn" type="button" value="View">
+            <button class="btn btn-primary my-btn" type="button" value="1" data-toggle="modal" data-target="#mymodal" onclick="loadModal(this.value);">View</button>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
+
+  <div class="modal fade" id="mymodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modal-t"></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="modal-b">
+
+      </div>
+      <div class="modal-body">
+
+        <form>
+          <div class="form-group">
+            <label for="diagnoses" class="col-form-label">Diagnoses:</label>
+            <input type="text" class="form-control" id="diagnoses">
+          </div>
+          <div class="form-group">
+            <label for="notes" class="col-form-label">Additional Notes:</label>
+            <textarea class="form-control" id="notes"></textarea>
+          </div>
+        </form>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
 
   <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -148,8 +243,6 @@
 </body>
 
 <footer>
-
-
 </footer>
 
 </html>
