@@ -31,6 +31,7 @@ if 'gcpMySQL' in config:
     DBNAME = config['gcpMySQL']['db']
 
     app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://{}:{}@{}/{}'.format(USER,PASS,HOST,DBNAME)
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 if 'googleCalendar' in config:
     mapsCalendarID = config['googleCalendar']['calendarID']
