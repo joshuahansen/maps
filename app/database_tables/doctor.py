@@ -34,9 +34,8 @@ class Doctor(db.Model):
     email = db.Column(db.String(80))
     calendarID = db.Column(db.String(255))
 
-    def __init__(self, id, firstname, lastname, email, calendarID):
-        '''Initialize Patient class'''
-        self.id = id
+    def __init__(self, firstname, lastname, email, calendarID):
+        '''Initialize Doctor class'''
         self.firstname = firstname
         self.lastname = lastname
         self.email = email

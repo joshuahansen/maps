@@ -32,9 +32,8 @@ class PatientNotes(db.Model):
     notes = db.Column(db.Text)
     diagnostics = db.Column(db.Text)
 
-    def __init__(self, id, notes, diagnostics):
-        '''Initialize Patient class'''
-        self.id = id
+    def __init__(self, patient_id, notes, diagnostics):
+        '''Initialize Patient notes class'''
         self.patient_id = patient_id
         self.notes = notes
         self.diagnostics = diagnostics
@@ -42,4 +41,4 @@ class PatientNotes(db.Model):
 class PatientNotesSchema(ma.Schema):
     class Meta:
         '''Fields to expose'''
-        fields = ('id', 'patient_note', 'notes', 'diagnostics')
+        fields = ('id', 'patient_id', 'notes', 'diagnostics')
