@@ -1,0 +1,9 @@
+{
+	"patientid" : "1",
+	"startDate": "2018-10-02T10:30:00",
+	"endDate": "2018-10-02T11:00:00",
+	"doctor": "test@test.com",
+	"description": "This is a test booking",
+	"summary": "Test Booking",
+	"location": "Room 10"
+}

@@ -27,18 +27,22 @@ if 'gcpMySQL' in config:
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
-class Doctors(db.Model):
+class Doctor(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     firstname = db.Column(db.String(80))
     lastname = db.Column(db.String(80))
+    email = db.Column(db.String(80))
+    calendarID = db.Column(db.String(255))
 
-    def __init__(self, id, firstname, lastname):
+    def __init__(self, id, firstname, lastname, email, calendarID):
         '''Initialize Patient class'''
         self.id = id
         self.firstname = firstname
         self.lastname = lastname
+        self.email = email
+        self.calendarID = calendarID
 
-class DoctorsSchema(ma.Schema):
+class DoctorSchema(ma.Schema):
     class Meta:
         '''Fields to expose'''
-        fields = ('id', 'firstname', 'lastname')
+        fields = ('id', 'firstname', 'lastname', 'email', 'calendarID')

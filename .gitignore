@@ -2,3 +2,7 @@ __pycache__
 venv/
 
 config.ini
+
+calendar-config.json
+
+token.json
