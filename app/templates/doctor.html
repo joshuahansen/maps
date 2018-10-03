@@ -28,7 +28,7 @@
         const table = document.getElementById('mytb');
 
         var request = new XMLHttpRequest();
-        request.open('GET', 'http://192.168.0.13:5000/api/patient', true);
+        request.open('GET', '/api/patient', true);
 
         request.onload = function () {
 
@@ -90,7 +90,7 @@
 
         const body = document.getElementById('modal-b');
 
-        var url =  "http://192.168.0.13:5000/api/patient/?id="
+        var url =  "/api/patient/?id="
         var fullURL = url.concat(val);
 
         var request = new XMLHttpRequest();
