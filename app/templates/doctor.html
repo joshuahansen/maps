@@ -21,6 +21,58 @@
       <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+
+  <script type="text/javascript">
+
+    function loadTable() {
+
+        const app = document.getElementById('mytb');
+
+        var request = new XMLHttpRequest();
+        request.open('GET', 'http://192.168.0.13:5000/api/patient', true);
+
+        request.onload = function () {
+
+          // Begin accessing JSON data here
+          var data = JSON.parse(this.response);
+
+          if (request.status >= 200 && request.status < 400) {
+
+            data.forEach(patient => {
+
+              const row = document.createElement('tr');
+
+              const id = document.createElement('th');
+              id.textContent = patient.id;
+
+              const name = document.createElement('td');
+              name.textContent = patient.firstname;
+
+              const email = document.createElement('td');
+              email.textContent = patient.email;
+
+              const dob = document.createElement('td');
+              dob.textContent = patient.dob;
+
+              mytb.appendChild(row);
+              row.appendChild(id);
+              row.appendChild(name);
+              row.appendChild(email);
+              row.appendChild(dob);
+
+            });
+
+          } else {
+            console.log('error');
+          }
+        }
+
+        request.send();
+      }
+
+      window.onload = loadTable;
+
+    </script>
 </head>
 
 <header>
@@ -74,7 +126,7 @@
           <th scope="col"></th>
         </tr>
       </thead>
-      <tbody>
+      <tbody id="mytb">
         <tr>
           <th scope="row">1</th>
           <td>Lohgan Nash</td>
