@@ -33,12 +33,27 @@ if 'gcpMySQL' in config:
     DBNAME = config['gcpMySQL']['db']
 
     app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://{}:{}@{}/{}'.format(USER,PASS,HOST,DBNAME)
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
 def add_appointment(request):
-    """Adds a new appointment to the calendar."""
+    """Adds a new appointment to the calendar.
+    
+    @param request is a json data structure with the following elements:
+        patientID
+        doctorID
+        startDateTime
+        endDateTime
+        summary
+        location
+        description
+    @return a json object containing success code and patient ID.
+        
+    """
+
+    print("Calling API function clerk.add_appointment(request).")
 
     # If modifying these scopes, delete the file token.json.
     SCOPES = 'https://www.googleapis.com/auth/calendar'
@@ -116,7 +131,14 @@ def add_appointment(request):
 #     return response
 
 def get_appointments_by_id(request):
-    """Reads all future appointments in the calendar."""
+    """Reads all future appointments in the calendar.
+
+    @param request is a single variable representing the appointment ID.
+    @return a json object containing all corresponding database records.
+
+    """
+
+    print("Calling API function clerk.get_appointments_by_id(request).")
 
     appointments = Appointment.query.filter_by(id=request)
     result = appointment_schema.dump(appointments)
@@ -125,7 +147,14 @@ def get_appointments_by_id(request):
     return response
 
 def get_appointments_by_patient(request):
-    """Reads all appointments for a particular patient."""
+    """Reads all appointments for a particular patient.
+
+    @param request is a single variable representing the patient ID.
+    @return a json object containing all corresponding database records.
+
+    """
+
+    print("Calling API function clerk.get_appointments_by_patient(request).")
     
     appointments = Appointment.query.filter_by(patientID=request)
     result = appointment_schema.dump(appointments)
@@ -134,7 +163,14 @@ def get_appointments_by_patient(request):
     return response
 
 def get_appointments_by_doctor(request):
-    """Reads all future appointments in the calendar."""
+    """Reads all future appointments in the calendar.
+
+    @param request is a single variable representing the doctor ID.
+    @return a json object containing all corresponding database records.
+
+    """
+
+    print("Calling API function clerk.get_appointments_by_doctor(request).")
     
     appointments = Appointment.query.filter_by(doctorID=request)
     result = appointment_schema.dump(appointments)
@@ -143,7 +179,14 @@ def get_appointments_by_doctor(request):
     return response
 
 def delete_appointment_by_id(request):
-    """Deletes an appointment in the calendar."""
+    """Deletes an appointment in the calendar.
+
+    @param request is a single variable representing the appointment ID.
+    @return a json object containing success code and appointment ID.
+
+    """
+
+    print("Calling API function clerk.delete_appointment_by_id(request).")
     
     # If modifying these scopes, delete the file token.json.
     SCOPES = 'https://www.googleapis.com/auth/calendar'
@@ -167,7 +210,14 @@ def delete_appointment_by_id(request):
     return response
 
 def test():
-    """Tests the connection to this API."""
+    """Tests the connection to this API.
+
+    @param request is a single variable representing the appointment ID.
+    @return a json object containing success code and message.
+
+    """
+
+    print("Calling API function clerk.test().")
     
     response = jsonify({"data": "Test API call without database"})
     response.status_code = 200

@@ -10,23 +10,32 @@ from flask import request
 from app import app
 from app.api import clerk as api
 
-@app.route('/api/clerk/', methods=['POST'])
+@app.route('/api/clerk/add', methods=['POST'])
 def add_appointment():
+    print("Calling endpoint /api/clerk/add.")
     return api.add_appointment(request)
 
-@app.route('/api/clerk/', methods=['POST'])
+@app.route('/api/clerk/get_by_id', methods=['GET'])
 def get_appointments():
-    if request.args.get('id'):
-        return api.get_appointment_by_doctor(request.args.get('id'))
-    elif request.args.get('patientID'):
-        return api.get_appointment_by_doctor(request.args.get('patientID'))
-    elif request.args.get('doctorID'):
-        return api.get_appointment_by_doctor(request.args.get('doctorID'))
+    print("Calling endpoint /api/clerk/get_by_id.")
+    return api.get_appointment_by_id(request)
 
-@app.route('/api/clerk/', methods=['DELETE'])
+@app.route('/api/clerk/get_by_patient', methods=['GET'])
+def get_appointments():
+    print("Calling endpoint /api/clerk/get_by_patient.")
+    return api.get_appointment_by_patient(request)
+
+@app.route('/api/clerk/get_by_doctor', methods=['GET'])
+def get_appointments():
+    print("Calling endpoint /api/clerk/get_by_doctor.")
+    return api.get_appointment_by_doctor(request)
+
+@app.route('/api/clerk/delete', methods=['DELETE'])
 def delete_appointment():
+    print("Calling endpoint /api/clerk/delete.")
     return api.delete_appointment(request)
 
-@app.route('/test', methods=['GET'])
+@app.route('/api/clerk/test', methods=['GET'])
 def test():
+    print("Calling endpoint /api/clerk/test.")
     return api.test()
