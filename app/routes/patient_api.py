@@ -44,6 +44,6 @@ def make_appointment():
 def get_availibility():
     return api.get_availibility(request)
 
-@app.route('/test', methods=['GET'])
-def test():
-    return api.test()
+@app.route('/api/reset/', methods=['GET'])
+def reset():
+    return api.reset()
