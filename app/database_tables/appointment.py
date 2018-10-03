@@ -27,7 +27,7 @@ if 'gcpMySQL' in config:
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
-class Appointments(db.Model):
+class Appointment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     patientID = db.Column(db.Integer)
     doctorID = db.Column(db.Integer)
