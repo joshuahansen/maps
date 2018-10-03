@@ -107,15 +107,15 @@
           title.textContent = patient.firstname;
 
           const address = document.createElement('p');
-          address.textContent = patient.address;
+          address.textContent = "Address: ".concat(patient.address);
           const dob = document.createElement('p');
-          dob.textContent = patient.dob;
+          dob.textContent = "D.O.B: ".concat(patient.dob);
           const gender = document.createElement('p');
-          gender.textContent = patient.gender;
+          gender.textContent = "Gender: ".concat(patient.gender);
           const email = document.createElement('p');
-          email.textContent = patient.email;
+          email.textContent = "Email: ".concat(patient.email);
           const phone = document.createElement('p');
-          phone.textContent = patient.phone;
+          phone.textContent = "Phone: ".concat(patient.phone);
 
           body.appendChild(address);
           body.appendChild(dob);
