@@ -12,6 +12,7 @@
   <!-- Bootstrap -->
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 
+  <link rel="stylesheet" type="text/css" href="../static/style.css">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
 
   <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -22,7 +23,8 @@
     <![endif]-->
 </head>
 
-<body>
+<header>
+
   <div class="wrapper">
     <nav class="navbar navbar-static-top my-nav">
       <div class="container">
@@ -40,8 +42,22 @@
             <li class="my-li"><a href="#">Clerk</a></li>
           </ul>
         </div>
+      </div>
     </nav>
   </div>
+
+</header>
+
+<body>
+
+  <div class="calendar-wrapper">
+    <iframe src="https://calendar.google.com/calendar/embed?src=9f6tam9gbb9bh6s6lqh415c2mc%40group.calendar.google.com&ctz=Australia%2FMelbourne"
+            style="border: 0"
+            width="1000"
+            height="600"
+            frameborder="0"
+            scrolling="no">
+    </iframe>
   </div>
 
   <div class="table-wrapper">
@@ -78,5 +94,10 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 </body>
+
+<footer>
+
+
+</footer>
 
 </html>

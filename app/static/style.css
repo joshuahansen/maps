@@ -56,10 +56,16 @@ body {
   color:  white;
   font-family: 'Lucida Console', Monaco, monospace;
   margin-bottom: 0;
-  margin-left: 20px; 
+  margin-left: 20px;
 }
 
 .table-wrapper {
+  width: 1000px;
+  margin: 0 auto;
+  margin-top: 50px;
+}
+
+.calendar-wrapper {
   width: 1000px;
   margin: 0 auto;
   margin-top: 50px;
