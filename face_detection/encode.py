@@ -1,8 +1,8 @@
 # USAGE
 # With default parameters
-# 		python3 02_encode.py
+# 		python3 encode.py
 # OR specifying the dataset, encodings and detection method
-# 		python3 02_encode.py -i dataset -e encodings.pickle -d cnn
+# 		python3 encode.py -i dataset -e encodings.pickle -d cnn
 
 ## Acknowledgement
 ## This code is adapted from:
