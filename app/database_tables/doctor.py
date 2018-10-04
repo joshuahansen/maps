@@ -1,8 +1,8 @@
 ##
 # Medical Appointment System (MAPS) - IoT Sem2 2018
 # 
-# Appointments database table
-# Holds a record of all appointments booked
+# Doctors database table
+# Holds all information about current doctors
 #
 # Authors: Adam Young, Joshua Hansen, Lohgan Nash, Zach Wingrave
 ##
@@ -23,23 +23,26 @@ if 'gcpMySQL' in config:
     DBNAME = config['gcpMySQL']['db']
 
     app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://{}:{}@{}/{}'.format(USER,PASS,HOST,DBNAME)
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
-class Appointments(db.Model):
+class Doctor(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    patientID = db.Column(db.Integer)
-    DoctorID = db.Column(db.Integer)
-    dateTime = db.Column(db.DateTime)
+    firstname = db.Column(db.String(80))
+    lastname = db.Column(db.String(80))
+    email = db.Column(db.String(80))
+    calendarID = db.Column(db.String(255))
 
-    def __init__(self, patientID, doctorID, dateTime):
-        '''Initialize Patient class'''
-        self.patientID = patientID
-        self.doctorID = doctorID
-        self.dateTime = dateTime
+    def __init__(self, firstname, lastname, email, calendarID):
+        '''Initialize Doctor class'''
+        self.firstname = firstname
+        self.lastname = lastname
+        self.email = email
+        self.calendarID = calendarID
 
-class AppointmentSchema(ma.Schema):
+class DoctorSchema(ma.Schema):
     class Meta:
         '''Fields to expose'''
-        fields = ('id', 'patientID', 'doctorID', 'dateTime')
+        fields = ('id', 'firstname', 'lastname', 'email', 'calendarID')

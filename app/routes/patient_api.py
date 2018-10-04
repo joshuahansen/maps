@@ -40,6 +40,10 @@ def update_patient():
 def make_appointment():
     return api.make_appointment(request)
 
-@app.route('/test', methods=['GET'])
-def test():
-    return api.test()
+@app.route('/api/patient/availibility/', methods=['POST'])
+def get_availibility():
+    return api.get_availibility(request)
+
+@app.route('/api/reset/', methods=['GET'])
+def reset():
+    return api.reset()

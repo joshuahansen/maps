@@ -1,7 +1,8 @@
 ##
 # Medical Appointment System (MAPS) - IoT Sem2 2018
 # 
-# Patient Notes database table
+# Doctors Availability database table
+# Stores the Availability of each doctor
 #
 # Authors: Adam Young, Joshua Hansen, Lohgan Nash, Zach Wingrave
 ##
@@ -27,19 +28,19 @@ if 'gcpMySQL' in config:
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
-class PatientNotes(db.Model):
+class DoctorAvailability(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    patient_id = db.Column(db.Integer)
-    notes = db.Column(db.Text)
-    diagnostics = db.Column(db.Text)
+    doctor_id = db.Column(db.Integer)
+    startDate = db.Column(db.DateTime)
+    endDate = db.Column(db.DateTime)
 
-    def __init__(self, patient_id, notes, diagnostics):
-        '''Initialize Patient notes class'''
-        self.patient_id = patient_id
-        self.notes = notes
-        self.diagnostics = diagnostics
+    def __init__(self, doctor_id, startDate, endDate):
+        '''Initialize Doctor Availability class'''
+        self.doctor_id = doctor_id
+        self.startDate = startDate
+        self.endDate = endDate
 
-class PatientNotesSchema(ma.Schema):
+class DoctorAvailibalitySchema(ma.Schema):
     class Meta:
         '''Fields to expose'''
-        fields = ('id', 'patient_id', 'notes', 'diagnostics')
+        fields = ('id', 'doctor_id', 'startDate', 'endDate')

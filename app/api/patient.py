@@ -18,6 +18,8 @@ from httplib2 import Http
 from oauth2client import file, client, tools
 from app import app
 from app.database_tables.patient import Patient, PatientSchema
+from app.database_tables.doctor import Doctor, DoctorSchema
+from app.database_tables.appointment import Appointment, AppointmentSchema
 
 
 config = configparser.ConfigParser()
@@ -30,12 +32,18 @@ if 'gcpMySQL' in config:
     DBNAME = config['gcpMySQL']['db']
 
     app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://{}:{}@{}/{}'.format(USER,PASS,HOST,DBNAME)
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+if 'googleCalendar' in config:
+    mapsCalendarID = config['googleCalendar']['calendarID']
 
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
 patient_schema = PatientSchema()
 patient_schema = PatientSchema(many=True)
+doctor_schema = DoctorSchema()
+doctor_schema = DoctorSchema(many=True)
 
 def get_patient(patient_id):
     '''Return a patient's data in JSON format'''
@@ -104,6 +112,8 @@ def delete_patient(patient_id):
     return response
 
 def make_appointment(request):
+    '''Add  a new appointment to the database'''
+    
     # If modifying these scopes, delete the file token.json.
     SCOPES = 'https://www.googleapis.com/auth/calendar'
     store = file.Storage('token.json')
@@ -113,17 +123,28 @@ def make_appointment(request):
         creds = tools.run_flow(flow, store)
     service = build('calendar', 'v3', http=creds.authorize(Http()))
     
-    '''Add  a new patient to the database'''
     patientID = request.json['patientid']
     startDate = request.json['startDate']
     endDate = request.json['endDate']
-    doctor = request.json['doctor']
+    doctor_id = request.json['doctor']
     description = request.json['description']
     summary = request.json['summary']
     location = request.json['location']
+    
+    doctor = Doctor.query.filter_by(id=doctor_id)
+    doctor_result = doctor_schema.dump(doctor)
+    
+    patient = patient.query.filter_by(id=patient_id)
+    patient_result = patient_schema.dump(patient)
+
 
     time_start = "{}".format(startDate)
     time_end   = "{}".format(endDate)
+
+    new_appointment = Appointment(patient_id, doctor_id, time_start, time_end)
+    db.session.add(new_appointment)
+    db.session.commit()
+    
     event = {
         'summary': summary,
         'location': location,
@@ -144,10 +165,14 @@ def make_appointment(request):
             ],
         },
         'attendees': [
-            {'email': doctor}
-        ]
+            {
+                'email': doctor_result.email,
+                'email': patient_result.email
+            }
+        ],
+        'transparency': 'opaque'
     }
-    event = service.events().insert(calendarId='primary', body=event).execute()
+    event = service.events().insert(calendarId=doctor_result.calendarID, body=event).execute()
     print('Event created: {}'.format(event.get('htmlLink')))
 
     response = jsonify({"status": "Successful", "action": "make-appointment", "id": patientID})
@@ -155,12 +180,59 @@ def make_appointment(request):
 
     return response
 
-def test():
-    response = jsonify({"data": "Test API call without database"})
+def get_availibility(request):
+    '''
+    Return availibility of doctors on certain day
+    '''
+    # If modifying these scopes, delete the file token.json.
+    SCOPES = 'https://www.googleapis.com/auth/calendar'
+    store = file.Storage('token.json')
+    creds = store.get()
+    if not creds or creds.invalid:
+        flow = client.flow_from_clientsecrets('calendar-config.json', SCOPES)
+        creds = tools.run_flow(flow, store)
+    service = build('calendar', 'v3', http=creds.authorize(Http()))
+    
+    startDate = request.json['startDate']
+    endDate = request.json['endDate']
+    doctor_id = request.json['doctorID']
+
+
+    doctor = Doctor.query.filter_by(id=doctor_id)
+    doctor_result = doctor_schema.dump(doctor)
+    
+    start_time = "{}".format(startDate)
+    end_time = "{}".format(endDate)
+    
+    freebusy = {
+            "timeMin": start_time,
+            "timeMax": end_time,
+            "items": [
+                {
+                    "id": doctor_result.calendarID
+                }
+            ],
+            "timeZone": "Australia/Melbourne"
+        }
+    
+    freebusyResponse = service.freebusy().query(body=freebusy).execute()
+
+    print(freebusyResponse)
+
+    response = jsonify(freebusyResponse['calendars'][doctor_result.calendarID]['busy'])
     response.status_code = 200
     return response
-# Uncomment to delete all tables in database
-#db.drop_all()
+    
+def reset():
+    # Uncomment to delete all tables in database
+    db.drop_all()
+    db.session.commit()
+    
+    # Uncomment to add all tables to the database
+    db.create_all()
+    db.session.commit()
 
-# Uncomment to add all tables to the database
-#db.create_all()
+    response = jsonify({"data": "Database was reset"})
+
+    response.status_code = 200
+    return response
