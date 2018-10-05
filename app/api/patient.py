@@ -21,9 +21,9 @@ from app.database_tables.doctor_availability import DoctorAvailability, DoctorAv
 from app.database_tables.appointment import Appointment, AppointmentSchema
 
 patient_schema = PatientSchema()
-patients_schema = PatientSchema(many=True)
+patient_schema = PatientSchema(many=True)
 doctor_schema = DoctorSchema()
-doctors_schema = DoctorSchema(many=True)
+doctor_schema = DoctorSchema(many=True)
 
 def get_patient(patient_id):
     '''Return a patient's data in JSON format'''
@@ -38,7 +38,7 @@ def get_patient(patient_id):
 def get_all_patients():
     '''Return all patient's data in JSON format'''
     all_patients = Patient.query.all()
-    result = patients_schema.dump(all_patients)
+    result = patient_schema.dump(all_patients)
     
     response = jsonify(result.data)
     response.status_code = 200
@@ -112,10 +112,10 @@ def make_appointment(request):
     location = request.json['location']
     
     doctor = Doctor.query.filter_by(id=doctor_id)
-    doctor_result = doctor_schema.dump(doctor)
+    doctor_result = doctor_schema.dump(doctor).data[0]
     
     patient = patient.query.filter_by(id=patient_id)
-    patient_result = patient_schema.dump(patient)
+    patient_result = patient_schema.dump(patient).data[0]
 
 
     time_start = "{}".format(startDate)
@@ -146,13 +146,13 @@ def make_appointment(request):
         },
         'attendees': [
             {
-                'email': doctor_result.email,
-                'email': patient_result.email
+                'email': doctor_result['email'],
+                'email': patient_result['email']
             }
         ],
         'transparency': 'opaque'
     }
-    event = service.events().insert(calendarId=doctor_result.calendarID, body=event).execute()
+    event = service.events().insert(calendarId=doctor_result['calendarID'], body=event).execute()
     print('Event created: {}'.format(event.get('htmlLink')))
 
     response = jsonify({"status": "Successful", "action": "make-appointment", "id": patientID})
@@ -177,9 +177,8 @@ def get_availibility(request):
     endDate = request.json['endDate']
     doctor_id = request.json['doctorID']
 
-
     doctor = Doctor.query.filter_by(id=doctor_id)
-    doctor_result = doctor_schema.dump(doctor)
+    doctor_result = doctor_schema.dump(doctor).data[0]
     
     start_time = "{}".format(startDate)
     end_time = "{}".format(endDate)
@@ -189,7 +188,7 @@ def get_availibility(request):
             "timeMax": end_time,
             "items": [
                 {
-                    "id": doctor_result.calendarID
+                    "id": doctor_result['calendarID']
                 }
             ],
             "timeZone": "Australia/Melbourne"
@@ -199,14 +198,14 @@ def get_availibility(request):
 
     print(freebusyResponse)
 
-    response = jsonify(freebusyResponse['calendars'][doctor_result.calendarID]['busy'])
+    response = jsonify(freebusyResponse['calendars'][doctor_result['calendarID']]['busy'])
     response.status_code = 200
     return response
 
 def get_doctors():
     '''Get all doctors for patients page selection'''
     all_doctors = Doctor.query.all()
-    result = doctors_schema.dump(all_doctors)
+    result = doctor_schema.dump(all_doctors)
     
     response = jsonify(result.data)
     response.status_code = 200
