@@ -6,7 +6,7 @@
 # Authors: Adam Young, Joshua Hansen, Lohgan Nashm, Zach Wingrave
 ##
 
-from flask import request, render_template
+from flask import redirect, request, render_template
 
 from flask_wtf import FlaskForm
 from wtforms import StringField,DateTimeField,SelectField
@@ -47,6 +47,6 @@ def maps_register():
     form = MapsRegister()
 
     if form.validate_on_submit():
-        return "<h2>Registered Successfully!</h2>"
+        return redirect("/patient")
 
     return render_template('maps_register.html', form=form)
