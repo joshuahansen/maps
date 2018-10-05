@@ -19,6 +19,7 @@ from oauth2client import file, client, tools
 from app import app
 from app.database_tables.patient import Patient, PatientSchema
 from app.database_tables.doctor import Doctor, DoctorSchema
+from app.database_tables.appointment import Appointment, AppointmentSchema
 
 
 config = configparser.ConfigParser()
@@ -31,6 +32,7 @@ if 'gcpMySQL' in config:
     DBNAME = config['gcpMySQL']['db']
 
     app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://{}:{}@{}/{}'.format(USER,PASS,HOST,DBNAME)
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 if 'googleCalendar' in config:
     mapsCalendarID = config['googleCalendar']['calendarID']
@@ -138,6 +140,11 @@ def make_appointment(request):
 
     time_start = "{}".format(startDate)
     time_end   = "{}".format(endDate)
+
+    new_appointment = Appointment(patient_id, doctor_id, time_start, time_end)
+    db.session.add(new_appointment)
+    db.session.commit()
+    
     event = {
         'summary': summary,
         'location': location,
@@ -216,12 +223,16 @@ def get_availibility(request):
     response.status_code = 200
     return response
     
-def test():
-    response = jsonify({"data": "Test API call without database"})
+def reset():
+    # Uncomment to delete all tables in database
+    db.drop_all()
+    db.session.commit()
+    
+    # Uncomment to add all tables to the database
+    db.create_all()
+    db.session.commit()
+
+    response = jsonify({"data": "Database was reset"})
+
     response.status_code = 200
     return response
-# Uncomment to delete all tables in database
-#db.drop_all()
-
-# Uncomment to add all tables to the database
-#db.create_all()
