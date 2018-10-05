@@ -1,0 +1,17 @@
+{% set title = "Patient Booking" %}
+{% set navclass = "my-nav" %}
+{% include '_header.html' %}
+    <div class="register-wrapper">
+      <div class="container">
+        <h1>Patient Booking</h1>
+        {% from "_formhelper.html" import render_field %}
+        <form method="POST">
+                {{ form.csrf_token }}
+                {{ render_field(form.doctor) }}
+                {{ render_field(form.date) }}
+
+                <input type="submit" class='btn btn-primary' value="Select Date">
+        </form>
+      </div>
+    </div>
+{% include '_footer.html' %}

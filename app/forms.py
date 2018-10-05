@@ -12,6 +12,10 @@ from flask_wtf import FlaskForm
 from wtforms import StringField,DateTimeField,SelectField
 from wtforms.validators import DataRequired,Email
 
+class AppointmentForm(FlaskForm):
+    doctor = StringField('Doctor', validators=[DataRequired()])
+    date = DateTimeField('Date of Birth', format='%d/%m/%Y')
+
 class MapsRegister(FlaskForm):
     fname = StringField('First Name', validators=[DataRequired()])
     lname = StringField('Last Name', validators=[DataRequired()])
@@ -50,3 +54,11 @@ def maps_register():
         return redirect("/patient")
 
     return render_template('maps_register.html', form=form)
+
+def maps_appointment():
+    form = AppointmentForm()
+
+    if form.validate_on_submit():
+        return "Valid"
+
+    return render_template('patient.html', form=form)

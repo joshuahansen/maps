@@ -20,6 +20,10 @@ def index():
 def register():
     return forms.maps_register()
 
+@app.route('/patient', methods=['GET', 'POST'])
+def patient():
+    return forms.maps_appointment()
+
 @app.route('/doctor')
 def doctor():
     return render_template('doctor.html')
