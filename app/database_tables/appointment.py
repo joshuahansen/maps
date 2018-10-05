@@ -23,11 +23,12 @@ if 'gcpMySQL' in config:
     DBNAME = config['gcpMySQL']['db']
 
     app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://{}:{}@{}/{}'.format(USER,PASS,HOST,DBNAME)
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
-class Appointments(db.Model):
+class Appointment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     patientID = db.Column(db.Integer)
     doctorID = db.Column(db.Integer)
@@ -35,7 +36,7 @@ class Appointments(db.Model):
     endDateTime = db.Column(db.DateTime)
 
     def __init__(self, patientID, doctorID, startDate, endDate):
-        '''Initialize Patient class'''
+        '''Initialize Appointment class'''
         self.patientID = patientID
         self.doctorID = doctorID
         self.startDateTime = startDate
