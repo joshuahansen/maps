@@ -7,28 +7,11 @@
 # Authors: Adam Young, Joshua Hansen, Lohgan Nash, Zach Wingrave
 ##
 
-import configparser
 import MySQLdb.cursors
-from flask_sqlalchemy import SQLAlchemy
-from flask_marshmallow import Marshmallow
-from app import app
-
-config = configparser.ConfigParser()
-config.read('config.ini')
-
-if 'gcpMySQL' in config:
-    HOST = config['gcpMySQL']['host']
-    USER = config['gcpMySQL']['user']
-    PASS = config['gcpMySQL']['pass']
-    DBNAME = config['gcpMySQL']['db']
-
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://{}:{}@{}/{}'.format(USER,PASS,HOST,DBNAME)
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-db = SQLAlchemy(app)
-ma = Marshmallow(app)
+from app import app, db, ma
 
 class Appointment(db.Model):
+    __tablename__ = 'appointments'
     id = db.Column(db.Integer, primary_key=True)
     patientID = db.Column(db.Integer)
     doctorID = db.Column(db.Integer)
