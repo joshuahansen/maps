@@ -7,43 +7,23 @@
 ##
 
 from flask import request, jsonify
-import configparser
 import MySQLdb.cursors
-from flask_sqlalchemy import SQLAlchemy
-from flask_marshmallow import Marshmallow
 from datetime import datetime
 from datetime import timedelta
 from googleapiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file, client, tools
-from app import app
+from app import app, db, ma
 from app.database_tables.patient import Patient, PatientSchema
+from app.database_tables.patient_notes import PatientNotes, PatientNotesSchema
 from app.database_tables.doctor import Doctor, DoctorSchema
+from app.database_tables.doctor_availability import DoctorAvailability, DoctorAvailabilitySchema
 from app.database_tables.appointment import Appointment, AppointmentSchema
 
-
-config = configparser.ConfigParser()
-config.read('config.ini')
-
-if 'gcpMySQL' in config:
-    HOST = config['gcpMySQL']['host']
-    USER = config['gcpMySQL']['user']
-    PASS = config['gcpMySQL']['pass']
-    DBNAME = config['gcpMySQL']['db']
-
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://{}:{}@{}/{}'.format(USER,PASS,HOST,DBNAME)
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-if 'googleCalendar' in config:
-    mapsCalendarID = config['googleCalendar']['calendarID']
-
-db = SQLAlchemy(app)
-ma = Marshmallow(app)
-
 patient_schema = PatientSchema()
-patient_schema = PatientSchema(many=True)
+patients_schema = PatientSchema(many=True)
 doctor_schema = DoctorSchema()
-doctor_schema = DoctorSchema(many=True)
+doctors_schema = DoctorSchema(many=True)
 
 def get_patient(patient_id):
     '''Return a patient's data in JSON format'''
@@ -58,7 +38,7 @@ def get_patient(patient_id):
 def get_all_patients():
     '''Return all patient's data in JSON format'''
     all_patients = Patient.query.all()
-    result = patient_schema.dump(all_patients)
+    result = patients_schema.dump(all_patients)
     
     response = jsonify(result.data)
     response.status_code = 200
@@ -222,17 +202,39 @@ def get_availibility(request):
     response = jsonify(freebusyResponse['calendars'][doctor_result.calendarID]['busy'])
     response.status_code = 200
     return response
-    
-def reset():
-    # Uncomment to delete all tables in database
-    db.drop_all()
-    db.session.commit()
-    
-    # Uncomment to add all tables to the database
-    db.create_all()
-    db.session.commit()
 
-    response = jsonify({"data": "Database was reset"})
-
+def get_doctors():
+    '''Get all doctors for patients page selection'''
+    all_doctors = Doctor.query.all()
+    result = doctors_schema.dump(all_doctors)
+    
+    response = jsonify(result.data)
     response.status_code = 200
     return response
+
+
+def face_dectected(request):
+    '''Add new patient to the queue'''
+    request.json['patient']
+
+    response = jsonify({"data": "Patient added to the queue"})
+    response.status_code = 200
+    return response
+    
+def reset():
+    try:
+        # Uncomment to delete all tables in database
+        db.drop_all()
+        # Uncomment to add all tables to the database
+        db.create_all()
+        db.session.commit()
+
+        response = jsonify({"data": "Database was reset"})
+
+        response.status_code = 200
+    except StandardError as err:
+        response = jsonify({"data": "Database was not reset", "error": err})
+
+        response.status_code = 404
+    finally:
+        return response

@@ -6,3 +6,6 @@ config.ini
 calendar-config.json
 
 token.json
+
+face_detection/data/
+face_detection/dataset/
