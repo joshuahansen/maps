@@ -26,6 +26,9 @@ if 'gcpMySQL' in config:
     app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://{}:{}@{}/{}'.format(USER,PASS,HOST,DBNAME)
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+if 'apiEndpoint' in config:
+    app.config['MAPS_API_BASE_URL'] = config['apiEndpoint']['baseurl']
+
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 

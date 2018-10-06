@@ -22,7 +22,7 @@ def register():
 
 @app.route('/patient', methods=['GET', 'POST'])
 def patient():
-    return forms.maps_appointment()
+    return forms.maps_appointment(app.config)
 
 @app.route('/doctor')
 def doctor():

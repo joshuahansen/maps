@@ -9,12 +9,17 @@
 from flask import redirect, request, render_template
 
 from flask_wtf import FlaskForm
-from wtforms import StringField,DateTimeField,SelectField
-from wtforms.validators import DataRequired,Email
+from wtforms import DateField,SelectField
+from wtforms.validators import DataRequired
+
+import requests
 
 class AppointmentForm(FlaskForm):
-    doctor = StringField('Doctor', validators=[DataRequired()])
-    date = DateTimeField('Date of Birth', format='%d/%m/%Y')
+
+    doctor = SelectField('Doctor',
+        validators=[DataRequired()]
+    )
+    date = DateField('Desired Appointment Date', format='%d/%m/%Y')
 
 class MapsRegister(FlaskForm):
     fname = StringField('First Name', validators=[DataRequired()])
@@ -55,10 +60,23 @@ def maps_register():
 
     return render_template('maps_register.html', form=form)
 
-def maps_appointment():
+def maps_appointment(config):
     form = AppointmentForm()
+
+    form.doctor.choices = doctors_list(config['MAPS_API_BASE_URL'])
 
     if form.validate_on_submit():
         return "Valid"
 
     return render_template('patient.html', form=form)
+
+# UTILS
+def doctors_list(apiurl):
+    r = requests.get(apiurl + "/patient/doctors/")
+
+    doctor_list = []
+    for doc in r.json():
+        fullname = "{} {}".format(doc['firstname'], doc["lastname"])
+        doctor_list.append((doc['id'], fullname))
+
+    return doctor_list
