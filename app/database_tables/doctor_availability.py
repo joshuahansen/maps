@@ -14,16 +14,18 @@ class DoctorAvailability(db.Model):
     __tablename__ = 'doctoravailability'
     id = db.Column(db.Integer, primary_key=True)
     doctor_id = db.Column(db.Integer)
-    startDate = db.Column(db.DateTime)
-    endDate = db.Column(db.DateTime)
+    day = db.Column(db.Integer)
+    startTime = db.Column(db.String(100))
+    endTime = db.Column(db.String(100))
 
     def __init__(self, doctor_id, startDate, endDate):
         '''Initialize Doctor Availability class'''
         self.doctor_id = doctor_id
-        self.startDate = startDate
-        self.endDate = endDate
+        self.day = day
+        self.startTime = startTime
+        self.endTime = endTime
 
 class DoctorAvailabilitySchema(ma.Schema):
     class Meta:
         '''Fields to expose'''
-        fields = ('id', 'doctor_id', 'startDate', 'endDate')
+        fields = ('id', 'doctor_id', 'day', 'startTime', 'endTime')

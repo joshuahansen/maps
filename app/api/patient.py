@@ -177,16 +177,29 @@ def get_availability(request):
         creds = tools.run_flow(flow, store)
     service = build('calendar', 'v3', http=creds.authorize(Http()))
     
-    startDate = request.json['startDate']
-    endDate = request.json['endDate']
     doctor_id = request.json['doctorID']
+    date = datetime.strptime(request.json['date'], "%Y-%m-%d")
+    day = date.weekday()
 
-    doctor = Doctor.query.filter_by(id=doctor_id)
-    doctor_result = doctor_schema.dump(doctor).data[0]
+    print(date)
+    print(day)
+    doctor_availability = DoctorAvailability.query.filter_by(doctor_id = doctor_id, day = day)
+    doctor_availability_result = doctor_availability_schema.dump(doctor_availability)
     
-    start_time = "{}".format(startDate)
-    end_time = "{}".format(endDate)
+    startTime = doctor_availability_result['startTime']
+    endTime = doctor_availability_result['endTime']
+
+    print(doctor_availability_result)
+    print(startTime)
+    print(endTime)
     
+    doctor = Doctor.query.filter_by(id=doctor_id).first
+    doctor_result = doctor_schema.dump(doctor).data
+    
+    dateString = date.strftime("%Y-%m-%d")
+    start_time = "{0}T{1}:00+10:00".format(dateString, startTime)
+    end_time = "{0}T{1}:00+10:00".format(dateString, endTime)
+    '''
     freebusy = {
             "timeMin": start_time,
             "timeMax": end_time,
@@ -202,6 +215,10 @@ def get_availability(request):
 
     response = jsonify(freebusyResponse['calendars'][doctor_result['calendarID']]['busy'])
     response.status_code = 200
+    '''
+    response = jsonify({"data": "failed to recieved doctor {} availability".format(doctor_id)})
+    response.status_code = 404
+        
     return response
 
 def get_doctors():
