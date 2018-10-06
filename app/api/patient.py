@@ -184,7 +184,7 @@ def get_availability(request):
     print(date)
     print(day)
     doctor_availability = DoctorAvailability.query.filter_by(doctor_id = doctor_id, day = day)
-    doctor_availability_result = doctor_availability_schema.dump(doctor_availability)
+    doctor_availability_result = doctor_availability_schema.dump(doctor_availability).data[0]
     
     startTime = doctor_availability_result['startTime']
     endTime = doctor_availability_result['endTime']
@@ -193,13 +193,13 @@ def get_availability(request):
     print(startTime)
     print(endTime)
     
-    doctor = Doctor.query.filter_by(id=doctor_id).first
-    doctor_result = doctor_schema.dump(doctor).data
+    doctor = Doctor.query.filter_by(id=doctor_id)
+    doctor_result = doctor_schema.dump(doctor).data[0]
     
     dateString = date.strftime("%Y-%m-%d")
     start_time = "{0}T{1}:00+10:00".format(dateString, startTime)
     end_time = "{0}T{1}:00+10:00".format(dateString, endTime)
-    '''
+    
     freebusy = {
             "timeMin": start_time,
             "timeMax": end_time,
@@ -213,12 +213,12 @@ def get_availability(request):
     
     freebusyResponse = service.freebusy().query(body=freebusy).execute()
 
-    response = jsonify(freebusyResponse['calendars'][doctor_result['calendarID']]['busy'])
+    response = jsonify({"availability": doctor_availability_result, "busy": freebusyResponse['calendars'][doctor_result['calendarID']]['busy']})
     response.status_code = 200
     '''
     response = jsonify({"data": "failed to recieved doctor {} availability".format(doctor_id)})
     response.status_code = 404
-        
+    '''    
     return response
 
 def get_doctors():
