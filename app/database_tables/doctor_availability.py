@@ -18,7 +18,7 @@ class DoctorAvailability(db.Model):
     startTime = db.Column(db.String(100))
     endTime = db.Column(db.String(100))
 
-    def __init__(self, doctor_id, startDate, endDate):
+    def __init__(self, doctor_id, day, startTime, endTime):
         '''Initialize Doctor Availability class'''
         self.doctor_id = doctor_id
         self.day = day

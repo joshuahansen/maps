@@ -25,7 +25,7 @@ patient_schema = PatientSchema(many=True)
 doctor_schema = DoctorSchema()
 doctor_schema = DoctorSchema(many=True)
 doctor_availability_schema = DoctorAvailabilitySchema()
-doctor_availability_schema = DoctorAvailabilitySchema(True)
+doctor_availability_schema = DoctorAvailabilitySchema(many=True)
 
 def get_patient(patient_id):
     '''Return a patient's data in JSON format'''
