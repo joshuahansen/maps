@@ -40,9 +40,17 @@ def update_patient():
 def make_appointment():
     return api.make_appointment(request)
 
-@app.route('/api/patient/availibility/', methods=['POST'])
-def get_availibility():
-    return api.get_availibility(request)
+@app.route('/api/patient/availability/', methods=['POST'])
+def get_availability():
+    return api.get_availability(request)
+
+@app.route('/api/patient/doctors/', methods=['GET'])
+def get_doctors():
+    return api.get_doctors()
+
+@app.route('/api/patient/face-detection/', methods=['POST'])
+def face_detected():
+    return api.face_derected(request)
 
 @app.route('/api/reset/', methods=['GET'])
 def reset():
