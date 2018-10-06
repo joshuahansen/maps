@@ -23,3 +23,7 @@ def register():
 @app.route('/doctor')
 def doctor():
     return render_template('doctor.html')
+
+@app.route('/clerk')
+def clerk():
+    return render_template('clerk.html')
