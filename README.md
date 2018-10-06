@@ -39,6 +39,12 @@ mv calendat-config.json to project root directory
 python3 create_token.py --noauth_local_webserver
 login online
 
+# Face Detection
+For best installation follow the following tutorial
+https://www.pyimagesearch.com/2017/09/04/raspbian-stretch-install-opencv-3-python-on-your-raspberry-pi/
+As we already have a virtual environment there is no need to do step 4
+Leave plenty of time for instalation as it takes multiple hours on the pi
+
 # Run the Flask server
 flask run
 ```
