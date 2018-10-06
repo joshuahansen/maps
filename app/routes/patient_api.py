@@ -40,9 +40,9 @@ def update_patient():
 def make_appointment():
     return api.make_appointment(request)
 
-@app.route('/api/patient/availibility/', methods=['POST'])
-def get_availibility():
-    return api.get_availibility(request)
+@app.route('/api/patient/availability/', methods=['POST'])
+def get_availability():
+    return api.get_availability(request)
 
 @app.route('/api/patient/doctors/', methods=['GET'])
 def get_doctors():

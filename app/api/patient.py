@@ -24,6 +24,8 @@ patient_schema = PatientSchema()
 patient_schema = PatientSchema(many=True)
 doctor_schema = DoctorSchema()
 doctor_schema = DoctorSchema(many=True)
+doctor_availability_schema = DoctorAvailabilitySchema()
+doctor_availability_schema = DoctorAvailabilitySchema(True)
 
 def get_patient(patient_id):
     '''Return a patient's data in JSON format'''
@@ -103,7 +105,7 @@ def make_appointment(request):
         creds = tools.run_flow(flow, store)
     service = build('calendar', 'v3', http=creds.authorize(Http()))
     
-    patientID = request.json['patientid']
+    patient_id = request.json['patient']
     startDate = request.json['startDate']
     endDate = request.json['endDate']
     doctor_id = request.json['doctor']
@@ -114,7 +116,7 @@ def make_appointment(request):
     doctor = Doctor.query.filter_by(id=doctor_id)
     doctor_result = doctor_schema.dump(doctor).data[0]
     
-    patient = patient.query.filter_by(id=patient_id)
+    patient = Patient.query.filter_by(id=patient_id)
     patient_result = patient_schema.dump(patient).data[0]
 
 
@@ -152,17 +154,19 @@ def make_appointment(request):
         ],
         'transparency': 'opaque'
     }
-    event = service.events().insert(calendarId=doctor_result['calendarID'], body=event).execute()
+    calendarID = doctor_result['calendarID']
+    print(calendarID)
+    event = service.events().insert(calendarId=calendarID, body=event).execute()
     print('Event created: {}'.format(event.get('htmlLink')))
 
-    response = jsonify({"status": "Successful", "action": "make-appointment", "id": patientID})
+    response = jsonify({"status": "Successful", "action": "make-appointment", "id": patient_id})
     response.status_code = 200
 
     return response
 
-def get_availibility(request):
+def get_availability(request):
     '''
-    Return availibility of doctors on certain day
+    Return availability of doctors on certain day
     '''
     # If modifying these scopes, delete the file token.json.
     SCOPES = 'https://www.googleapis.com/auth/calendar'
@@ -195,8 +199,6 @@ def get_availibility(request):
         }
     
     freebusyResponse = service.freebusy().query(body=freebusy).execute()
-
-    print(freebusyResponse)
 
     response = jsonify(freebusyResponse['calendars'][doctor_result['calendarID']]['busy'])
     response.status_code = 200
