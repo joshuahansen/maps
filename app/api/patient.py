@@ -162,65 +162,76 @@ def make_appointment(request):
         flow = client.flow_from_clientsecrets('calendar-config.json', SCOPES)
         creds = tools.run_flow(flow, store)
     service = build('calendar', 'v3', http=creds.authorize(Http()))
-    
-    patient_id = request.json['patient']
-    startDate = request.json['startDate']
-    endDate = request.json['endDate']
-    doctor_id = request.json['doctor']
-    description = request.json['description']
-    summary = request.json['summary']
-    location = request.json['location']
-    
-    doctor = Doctor.query.filter_by(id=doctor_id)
-    doctor_result = doctor_schema.dump(doctor).data[0]
-    
-    patient = Patient.query.filter_by(id=patient_id)
-    patient_result = patient_schema.dump(patient).data[0]
+   
+    try:
+        patient_id = request.json['patient']
+        startDate = request.json['startDate']
+        endDate = request.json['endDate']
+        doctor_id = request.json['doctor']
+        description = request.json['description']
+        summary = request.json['summary']
+        location = request.json['location']
+        
+        doctor = Doctor.query.filter_by(id=doctor_id)
+        doctor_result = doctor_schema.dump(doctor).data
+        if len(doctor_result) < 1:
+            raise ValueError
+        doctor_result = doctor_result[0]
+        
+        patient = Patient.query.filter_by(id=patient_id)
+        patient_result = patient_schema.dump(patient).data
+        
+        if len(patient_result) < 1:
+            raise ValueError
+        patient_result = patient_result[0]
 
 
-    time_start = "{}".format(startDate)
-    time_end   = "{}".format(endDate)
+        time_start = "{}".format(startDate)
+        time_end   = "{}".format(endDate)
 
-    new_appointment = Appointment(patient_id, doctor_id, time_start, time_end)
-    db.session.add(new_appointment)
-    db.session.commit()
-    
-    event = {
-        'summary': summary,
-        'location': location,
-        'description': description,
-        'start': {
-            'dateTime': time_start,
-            'timeZone': 'Australia/Melbourne',
-        },
-        'end': {
-            'dateTime': time_end,
-            'timeZone': 'Australia/Melbourne',
-        },
-        'reminders': {
-            'useDefault': False,
-            'overrides': [
-                {'method': 'email', 'minutes': 5},
-                {'method': 'popup', 'minutes': 10},
+        new_appointment = Appointment(patient_id, doctor_id, time_start, time_end)
+        db.session.add(new_appointment)
+        db.session.commit()
+        
+        event = {
+            'summary': summary,
+            'location': location,
+            'description': description,
+            'start': {
+                'dateTime': time_start,
+                'timeZone': 'Australia/Melbourne',
+            },
+            'end': {
+                'dateTime': time_end,
+                'timeZone': 'Australia/Melbourne',
+            },
+            'reminders': {
+                'useDefault': False,
+                'overrides': [
+                    {'method': 'email', 'minutes': 5},
+                    {'method': 'popup', 'minutes': 10},
+                ],
+            },
+            'attendees': [
+                {
+                    'email': doctor_result['email'],
+                    'email': patient_result['email']
+                }
             ],
-        },
-        'attendees': [
-            {
-                'email': doctor_result['email'],
-                'email': patient_result['email']
-            }
-        ],
-        'transparency': 'opaque'
-    }
-    calendarID = doctor_result['calendarID']
-    print(calendarID)
-    event = service.events().insert(calendarId=calendarID, body=event).execute()
-    print('Event created: {}'.format(event.get('htmlLink')))
+            'transparency': 'opaque'
+        }
+        calendarID = doctor_result['calendarID']
+        print(calendarID)
+        event = service.events().insert(calendarId=calendarID, body=event).execute()
+        print('Event created: {}'.format(event.get('htmlLink')))
 
-    response = jsonify({"status": "Successful", "action": "make-appointment", "id": patient_id})
-    response.status_code = 200
-
-    return response
+        response = jsonify({"status": "Successful", "action": "make-appointment", "id": patient_id})
+        response.status_code = 200
+    except ValueError:
+        response = jsonify({"status": "failed", "action": "make-appointment", "id": patient_id})
+        response.status_code = 200
+    finally:
+        return response
 
 def get_availability(request):
     '''
@@ -243,40 +254,52 @@ def get_availability(request):
         creds = tools.run_flow(flow, store)
     service = build('calendar', 'v3', http=creds.authorize(Http()))
     
-    doctor_id = request.json['doctorID']
-    date = datetime.strptime(request.json['date'], "%Y-%m-%d")
-    day = date.weekday()
+    try:
+        doctor_id = request.json['doctorID']
+        date = datetime.strptime(request.json['date'], "%Y-%m-%d")
+        day = date.weekday()
 
-    doctor_availability = DoctorAvailability.query.filter_by(doctor_id = doctor_id, day = day)
-    doctor_availability_result = doctor_availability_schema.dump(doctor_availability).data[0]
-    
-    startTime = doctor_availability_result['startTime']
-    endTime = doctor_availability_result['endTime']
+        doctor_availability = DoctorAvailability.query.filter_by(doctor_id = doctor_id, day = day)
+        doctor_availability_result = doctor_availability_schema.dump(doctor_availability).data
+        
+        if len(doctor_availability_result) < 1:
+            raise ValueError
+        doctor_availability_result = doctor_availability_result[0]
+        
+        startTime = doctor_availability_result['startTime']
+        endTime = doctor_availability_result['endTime']
 
-    doctor = Doctor.query.filter_by(id=doctor_id)
-    doctor_result = doctor_schema.dump(doctor).data[0]
-    
-    dateString = date.strftime("%Y-%m-%d")
-    start_time = "{0}T{1}:00+10:00".format(dateString, startTime)
-    end_time = "{0}T{1}:00+10:00".format(dateString, endTime)
-    
-    freebusy = {
-            "timeMin": start_time,
-            "timeMax": end_time,
-            "items": [
-                {
-                    "id": doctor_result['calendarID']
-                }
-            ],
-            "timeZone": "Australia/Melbourne"
-        }
-    
-    freebusyResponse = service.freebusy().query(body=freebusy).execute()
+        doctor = Doctor.query.filter_by(id=doctor_id)
+        doctor_result = doctor_schema.dump(doctor).data
+        
+        if len(doctor_result) < 1:
+            raise ValueError
+        doctor_result = doctor_result[0]
+        
+        dateString = date.strftime("%Y-%m-%d")
+        start_time = "{0}T{1}:00+10:00".format(dateString, startTime)
+        end_time = "{0}T{1}:00+10:00".format(dateString, endTime)
+        
+        freebusy = {
+                "timeMin": start_time,
+                "timeMax": end_time,
+                "items": [
+                    {
+                        "id": doctor_result['calendarID']
+                    }
+                ],
+                "timeZone": "Australia/Melbourne"
+            }
+        
+        freebusyResponse = service.freebusy().query(body=freebusy).execute()
 
-    response = jsonify({"availability": doctor_availability_result, "busy": freebusyResponse['calendars'][doctor_result['calendarID']]['busy']})
-    response.status_code = 200
-    
-    return response
+        response = jsonify({"availability": doctor_availability_result, "busy": freebusyResponse['calendars'][doctor_result['calendarID']]['busy']})
+        response.status_code = 200
+    except ValueError:
+        response = jsonify({"status": "failed", "action": "get doctor's availability", "id": doctor_id})
+        response.status_code = 404
+    finally:    
+        return response
 
 def get_doctors():
     '''
