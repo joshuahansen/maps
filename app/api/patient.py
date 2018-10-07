@@ -19,9 +19,12 @@ from app.database_tables.patient_notes import PatientNotes, PatientNotesSchema
 from app.database_tables.doctor import Doctor, DoctorSchema
 from app.database_tables.doctor_availability import DoctorAvailability, DoctorAvailabilitySchema
 from app.database_tables.appointment import Appointment, AppointmentSchema
+from app.database_tables.patient_queue import PatientQueue, PatientQueueSchema
 
 patient_schema = PatientSchema()
 patient_schema = PatientSchema(many=True)
+patient_queue_schema = PatientQueueSchema()
+patient_queue_schema = PatientQueueSchema(many=True)
 doctor_schema = DoctorSchema()
 doctor_schema = DoctorSchema(many=True)
 doctor_availability_schema = DoctorAvailabilitySchema()
@@ -231,18 +234,43 @@ def get_doctors():
     return response
 
 
-def face_dectected(request):
+def face_detected(request):
     '''Add new patient to the queue'''
-    request.json['patient']
+    print(request.json)
+    patient_name = request.json['patient']
+    fname, lname = patient_name.split("_")
 
-    response = jsonify({"data": "Patient added to the queue"})
-    response.status_code = 200
+    patient = Patient.query.filter(Patient.firstname.like(fname), Patient.lastname.like(lname))
+    result = patient_schema.dump(patient).data
+
+    if(len(result) > 0):
+        patient_id = result[0]['id']
+        arrival = datetime.now()
+        
+        queue = PatientQueue.query.filter(PatientQueue.patient_id == patient_id)
+        queue_results = patient_queue_schema.dump(queue).data
+
+        if len(queue_results) == 0:
+            new_arrival = PatientQueue(patient_id, arrival)
+
+            db.session.add(new_arrival)
+            db.session.commit()
+            response = jsonify({"data": "Patient added to the queue"})
+            response.status_code = 200
+        else:
+            response = jsonify({"data": "Patient already in the queue"})
+            response.status_code = 200
+            
+    else:
+        response = jsonify({"data": "Patient was not added to the queue"})
+        response.status_code = 404
+        
     return response
     
 def reset():
     try:
         # Uncomment to delete all tables in database
-        db.drop_all()
+        #db.drop_all()
         # Uncomment to add all tables to the database
         db.create_all()
         db.session.commit()
@@ -250,8 +278,8 @@ def reset():
         response = jsonify({"data": "Database was reset"})
 
         response.status_code = 200
-    except StandardError as err:
-        response = jsonify({"data": "Database was not reset", "error": err})
+    except:
+        response = jsonify({"data": "Database was not reset"})
 
         response.status_code = 404
     finally:
