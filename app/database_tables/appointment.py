@@ -23,7 +23,7 @@ class Appointment(db.Model):
         self.patientID = patientID
         self.doctorID = doctorID
         self.startDateTime = startDate
-        seld.endDateTime = endDate
+        self.endDateTime = endDate
 
 class AppointmentSchema(ma.Schema):
     class Meta:
