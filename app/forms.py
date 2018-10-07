@@ -58,6 +58,7 @@ def maps_register():
     form = MapsRegister()
 
     if form.validate_on_submit():
+        create_patient(form)
         return redirect("/patient")
 
     return render_template('maps_register.html', form=form)
@@ -121,6 +122,22 @@ def maps_appointment_confirmation(config):
 
 
 # UTILS
+def create_patient(form):
+    payload = {
+	"firstname": form.fname.data,
+	"lastname": form.lname.data,
+	"phone": form.phone.data,
+	"email": form.email.data,
+	"gender": form.gender.data,
+	"dob": datetime.strftime(form.dob.data, '%d/%m/%Y'),
+	"address": form.address.data,
+	"city": form.city.data,
+	"state": form.state.data,
+	"postcode": form.postcode.data
+    }
+
+    r = requests.post("http://localhost:5000/api/patient/", json=payload)
+
 def doctors_list(apiurl):
     r = requests.get(apiurl + "/patient/doctors/")
 
@@ -178,3 +195,4 @@ def make_appointment(apiurl, form, time_list):
     r = requests.post("http://localhost:5000/api/patient/make-appointment/", json=payload)
 
     return starttime
+
