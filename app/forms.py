@@ -79,7 +79,11 @@ def maps_appointment(config):
         doctor = form.doctor.data
         date = form.date.data
 
-        formwithtime.time.choices = times_list(config['MAPS_API_BASE_URL'], doctor, date)
+        time_list = times_list(config['MAPS_API_BASE_URL'], doctor, date)
+        if len(time_list) == 0:
+            return render_template('patient.html', form=form, selecttext="Choose Date", error="No appointment times for this doctor on this date.")
+
+        formwithtime.time.choices = time_list
 
         # Use values given to us previously
         formwithtime.doctor.default = doctor
@@ -89,10 +93,10 @@ def maps_appointment(config):
         formwithtime.doctor.render_kw={'readonly':''}
         formwithtime.date.render_kw={'readonly':''}
 
-        return render_template('patient.html', form=formwithtime, action="/patient/confirmation")
+        return render_template('patient.html', form=formwithtime, selecttext="Confirm Appointment", action="/patient/confirmation")
 
     else:
-        return render_template('patient.html', form=form)
+        return render_template('patient.html', form=form, selecttext="Choose Date")
 
 def maps_appointment_confirmation(config):
     form = ApptWithTime()
@@ -156,8 +160,15 @@ def times_list(apiurl, doctor, date):
     r = requests.post(apiurl + "/patient/availability/", json={'doctorID': doctor, 'date': datestr})
     summary = r.json()
 
+    if 'status' in summary and summary['status'] == 'failed':
+        return time_list # no available times
+
     day_start = summary['availability']['startTime']
     day_end = summary['availability']['endTime']
+
+    busy_arr = summary['busy']
+
+    busy_times = [datetime.strptime(o['start'].split("+")[0], '%Y-%m-%dT%H:%M:%S') for o in busy_arr]
 
     start_hr,start_min = map(int, day_start.split(':'))
     end_hr,end_min = map(int, day_end.split(':'))
@@ -169,7 +180,8 @@ def times_list(apiurl, doctor, date):
 
     for i in range(0, possible_slots):
         appt_time = startTime + timedelta(seconds=i * appt_length)
-        time_list.append((str(i), appt_time.strftime('%H:%M')))
+        if appt_time not in busy_times:
+            time_list.append((str(i), appt_time.strftime('%H:%M')))
 
     print(time_list)
 
@@ -187,10 +199,10 @@ def make_appointment(apiurl, form, time_list):
         'patient': 1,
         'startDate': '{}T{}:00'.format(date, starttime),
         'endDate': '{}T{}:00'.format(date, endtime),
-        'doctor': 1,
-        'description': 'test',
-        'summary': 'test',
-        'location': 'loc'
+        'doctor': doctor,
+        'description': 'An Appointment Booking',
+        'summary': '',
+        'location': 'The Clinic'
     }
     r = requests.post("http://localhost:5000/api/patient/make-appointment/", json=payload)
 

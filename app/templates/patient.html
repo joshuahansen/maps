@@ -5,6 +5,9 @@
       <div class="container">
         <h1>Patient Booking</h1>
         {% from "_formhelper.html" import render_field %}
+        {% if error is defined %}
+            <p style="color: red">Error: {{error}}</p>
+        {% endif %}
         <form {% if action is defined %}
                 action="{{action}}" 
               {% endif %} method="POST">
@@ -13,7 +16,7 @@
                     {{ render_field(field) }}
                 {% endfor %}
 
-                <input type="submit" class='btn btn-primary' value="Select Date">
+                <input type="submit" class='btn btn-primary' value="{{ selecttext }}">
         </form>
       </div>
     </div>
