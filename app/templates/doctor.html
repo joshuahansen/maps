@@ -34,7 +34,10 @@
 
     function loadDoctors() {
       
-      const select = document.getElementById('select-doctor')
+      console.log("Test1");
+      const select = document.getElementById('select-doctor');
+      const div = document.getElementById('calendar-wrapper');
+
       var request = new XMLHttpRequest();
       request.open('GET', '/api/doctor/get_all_doctors/', true);
 
@@ -48,10 +51,21 @@
 
             const option = document.createElement('option');
             option.setAttribute('value', doctor.id); 
-            
-            option.textContent = doctor.firstname + doctor.lastname;
+            option.setAttribute('onclick', "showCalendar("+doctor.id+")");
+            select.setAttribute('onchange', "if (this.selectedIndex) showCalendar(this[this.selectedIndex].value)");
+            option.textContent = doctor.firstname + " " + doctor.lastname;
+
+            const calendar = document.createElement('iframe');
+            calendar.setAttribute('src', "https://calendar.google.com/calendar/embed?src="+doctor.calendarID+"group.calendar.google.com&ctz=Australia%2FMelbourne");
+            calendar.setAttribute('style', 'border: 0; display: none;');
+            calendar.setAttribute('width', '1000');
+            calendar.setAttribute('height', '600');
+            calendar.setAttribute('frameborder', '0');
+            calendar.setAttribute('scrolling', 'no');
+            calendar.setAttribute('id', "calendar-"+doctor.id);
 
             select.appendChild(option);
+            div.appendChild(calendar);
 
           });
 
@@ -64,7 +78,44 @@
 
     }
 
-    window.onload = loadDoctors;
+    function showCalendar(id) {
+
+      console.log(id);
+      var all = document.getElementsByTagName("iframe");
+
+      for (var i = 0; i < all.length; i++) {
+
+        var curr = all[i];
+        curr.setAttribute('style', 'border: 0; display: none;');
+
+      }
+
+      var url =  "/api/doctor/get_doctor/?id="
+      var fullURL = url.concat(id);
+
+      var request = new XMLHttpRequest();
+      request.open('GET', fullURL, true);
+      request.onload = function () {
+
+        var data = JSON.parse(this.response);
+
+        if (request.status >= 200 && request.status < 400) {
+
+          data.forEach(doctor => {
+
+            const calendar = document.getElementById("calendar-"+doctor.id);
+            calendar.setAttribute('style', 'border: 0');
+
+          });
+
+        } else {
+          console.log('error');
+        }
+
+      }
+        
+        request.send();
+    }
 
     function loadTable() {
 
@@ -88,7 +139,7 @@
               id.textContent = patient.id;
 
               const name = document.createElement('td');
-              name.textContent = patient.firstname;
+              name.textContent = patient.firstname + " " + patient.lastname;
 
               const email = document.createElement('td');
               email.textContent = patient.email;
@@ -99,7 +150,7 @@
               const button = document.createElement('td');
               button.setAttribute('class', 'btn-td');
 
-              const input = document.createElement('button');
+              const input = document.createElement('input');
               input.setAttribute('class', 'btn btn-primary my-btn');
               input.setAttribute('type', 'button');
               input.setAttribute('value', patient.id);
@@ -125,9 +176,7 @@
         }
 
         request.send();
-      }
-
-      window.onload = loadTable;
+      } 
 
       function loadModal(val) {
 
@@ -176,6 +225,12 @@
 
       }
 
+      function load () {
+        loadDoctors();
+        loadTable();
+      }
+      window.onload = load;
+
     </script>
 </head>
 
@@ -208,18 +263,12 @@
 
   <div class="custom-select">
       <select id="select-doctor">
-        
+          <option disabled selected value> -- select an option -- </option>
+          
       </select>
   </div>
 
-  <div class="calendar-wrapper">
-    <iframe src="https://calendar.google.com/calendar/embed?src=9f6tam9gbb9bh6s6lqh415c2mc%40group.calendar.google.com&ctz=Australia%2FMelbourne"
-            style="border: 0"
-            width="1000"
-            height="600"
-            frameborder="0"
-            scrolling="no">
-    </iframe>
+  <div class="calendar-wrapper" id="calendar-wrapper">
   </div>
 
   <div class="table-wrapper">
@@ -255,7 +304,7 @@
       </div>
       <div class="modal-body">
 
-        <form action="myurl" method="POST" name="myForm">
+        <form>
           <div class="form-group">
             <label for="diagnoses" class="col-form-label">Diagnoses:</label>
             <input type="text" class="form-control" id="diagnoses">
