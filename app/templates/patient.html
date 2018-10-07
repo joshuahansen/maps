@@ -5,7 +5,9 @@
       <div class="container">
         <h1>Patient Booking</h1>
         {% from "_formhelper.html" import render_field %}
-        <form method="POST">
+        <form {% if action is defined %}
+                action="{{action}}" 
+              {% endif %} method="POST">
                 {{ form.csrf_token }}
                 {% for field in form if field.widget.input_type != 'hidden' %}
                     {{ render_field(field) }}

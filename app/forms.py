@@ -64,17 +64,17 @@ def maps_register():
 
 def maps_appointment(config):
     form = AppointmentForm()
-    formwithtime = ApptWithTime()
     timeArr = []
 
-    form.doctor.choices = doctors_list(config['MAPS_API_BASE_URL'])
-    formwithtime.doctor.choices = doctors_list(config['MAPS_API_BASE_URL'])
+    doctor_list = doctors_list(config['MAPS_API_BASE_URL'])
+
+    form.doctor.choices = doctor_list
 
     if form.validate_on_submit():
         print("Valid")
+        formwithtime = ApptWithTime()
+        formwithtime.doctor.choices = doctor_list
 
-
-        print(form.doctor.data)
         doctor = form.doctor.data
         date = form.date.data
 
@@ -85,17 +85,39 @@ def maps_appointment(config):
         formwithtime.date.default = date
 
         # Disabled the fields above time
-        formwithtime.doctor.render_kw={'disabled':''}
-        formwithtime.date.render_kw={'disabled':''}
+        formwithtime.doctor.render_kw={'readonly':''}
+        formwithtime.date.render_kw={'readonly':''}
 
-        return render_template('patient.html', form=formwithtime)
+        return render_template('patient.html', form=formwithtime, action="/patient/confirmation")
 
-    elif formwithtime.validate_on_submit():
-        # make the appointment
-
-        return render_template('patient.html', form=formwithtime)
     else:
         return render_template('patient.html', form=form)
+
+def maps_appointment_confirmation(config):
+    form = ApptWithTime()
+
+    doctor_list = doctors_list(config['MAPS_API_BASE_URL'])
+    form.doctor.choices = doctor_list
+
+    doctor = form.doctor.data
+    date = form.date.data
+
+    time_list = times_list(config['MAPS_API_BASE_URL'], doctor, date)
+    form.time.choices = time_list
+
+    if form.validate_on_submit():
+
+
+        # make the appointment
+        appt_time = make_appointment(config['MAPS_API_BASE_URL'], form, time_list)
+
+        return render_template('appt_confirmation.html', date=datetime.strftime(date, '%d/%m/%Y'), time=appt_time)
+
+    for field in form:
+        for error in field.errors:
+            print(error)
+    return "An error has occured."
+
 
 
 # UTILS
@@ -132,8 +154,27 @@ def times_list(apiurl, doctor, date):
         appt_time = startTime + timedelta(seconds=i * appt_length)
         time_list.append((str(i), appt_time.strftime('%H:%M')))
 
-    # for time in r.json():
-    #print(r.json())
     print(time_list)
 
     return time_list
+
+def make_appointment(apiurl, form, time_list):
+    doctor = form.doctor.data
+    date = form.date.data.date() # no time please
+    selected_slot = int(form.time.data)
+
+    starttime = time_list[selected_slot][1]
+    endtime = time_list[selected_slot+1][1]
+
+    payload = {
+        'patient': 1,
+        'startDate': '{}T{}:00'.format(date, starttime),
+        'endDate': '{}T{}:00'.format(date, endtime),
+        'doctor': 1,
+        'description': 'test',
+        'summary': 'test',
+        'location': 'loc'
+    }
+    r = requests.post("http://localhost:5000/api/patient/make-appointment/", json=payload)
+
+    return starttime

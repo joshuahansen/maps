@@ -24,6 +24,10 @@ def register():
 def patient():
     return forms.maps_appointment(app.config)
 
+@app.route('/patient/confirmation', methods=['GET', 'POST'])
+def patient_confirmation():
+    return forms.maps_appointment_confirmation(app.config)
+
 @app.route('/doctor')
 def doctor():
     return render_template('doctor.html')
