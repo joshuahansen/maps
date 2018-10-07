@@ -11,6 +11,10 @@ import MySQLdb.cursors
 from app import app, db, ma
 
 class DoctorAvailability(db.Model):
+    '''
+    Doctor availabilty class for storing availability in
+    the database
+    '''
     __tablename__ = 'doctoravailability'
     id = db.Column(db.Integer, primary_key=True)
     doctor_id = db.Column(db.Integer)
@@ -19,7 +23,9 @@ class DoctorAvailability(db.Model):
     endTime = db.Column(db.String(100))
 
     def __init__(self, doctor_id, day, startTime, endTime):
-        '''Initialize Doctor Availability class'''
+        '''
+        Constructor to initialize Doctor Availability class
+        '''
         self.doctor_id = doctor_id
         self.day = day
         self.startTime = startTime
@@ -27,5 +33,7 @@ class DoctorAvailability(db.Model):
 
 class DoctorAvailabilitySchema(ma.Schema):
     class Meta:
-        '''Fields to expose'''
+        '''
+        Fields to expose
+        '''
         fields = ('id', 'doctor_id', 'day', 'startTime', 'endTime')

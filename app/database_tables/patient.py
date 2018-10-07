@@ -10,6 +10,10 @@ import MySQLdb.cursors
 from app import app, db, ma
 
 class Patient(db.Model):
+    '''
+    Patient Class stores all relevant details for the patient
+    in the database
+    '''
     __tablename__ = 'patients'
     id = db.Column(db.Integer, primary_key=True)
     firstname = db.Column(db.String(80))
@@ -25,7 +29,9 @@ class Patient(db.Model):
 
     def __init__(self, firstname, lastname, phone, email,
                     gender, dob, address, city, state, postcode):
-        '''Initialize Patient class'''
+        '''
+        Constructor to initialize Patient class
+        '''
         self.firstname = firstname
         self.lastname = lastname
         self.phone = phone
@@ -39,6 +45,8 @@ class Patient(db.Model):
 
 class PatientSchema(ma.Schema):
     class Meta:
-        '''Fields to expose'''
+        '''
+        Fields to expose
+        '''
         fields = ('id', 'firstname', 'lastname', 'phone', 'email',
             'gender', 'dob', 'address', 'city', 'state', 'postcode')
