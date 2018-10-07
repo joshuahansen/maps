@@ -13,12 +13,12 @@ from flask_marshmallow import Marshmallow
 
 from app import app, db, ma
 from app.database_tables.patient import Patient, PatientSchema
-from app.database_tables.doctor import Doctor, DoctorSchema
+from app.database_tables.doctor_availability import DoctorAvailability, DoctorAvailabilitySchema
 
 patient_schema = PatientSchema()
 patient_schema = PatientSchema(many=True)
-doctor_schema = DoctorSchema()
-doctor_schema = DoctorSchema(many=True)
+doctor_availability_schema = DoctorAvailabilitySchema()
+doctor_availability_schema = DoctorAvailabilitySchema(many=True)
 
 def get_patient(request):
     """Reads all patients for a particular ID.
@@ -30,35 +30,68 @@ def get_patient(request):
 
     print("Calling API function doctor.get_patient(request).")
 
-    response = None
+    patient = Patient.query.filter_by(id=request)
+    result = patient_schema.dump(patient)
+    response = jsonify(result.data)
+    response.status_code = 200
     return response
 
 def add_patient_note(request):
     """Adds a patient note for the particular patient ID.
 
     @param request is a json data structure with the following elements:
-        test
+        patientID
+        notes
+        diagnoses
     @return a json object containing success code and patient ID.
         
     """
 
     print("Calling API function doctor.add_patient_note(request).")
 
-    response = None
+    # Build note details.
+    patientID = request.json['patientID']
+    notes = request.json['notes']
+    diagnoses = request.json['diagnoses']
+
+    # Add note to table in database.
+    new_note = PatientNotes(patientID, notes, diagnoses)
+    db.session.add(new_note)
+    db.session.commit()
+
+    # Provide feedback to user.
+    response = jsonify({"status": "Successful", "action": "add-note", "id": patientID})
+    response.status_code = 200
     return response
 
 def set_availability(request):
-    """Updates the availability for a particular doctor ID.
+    """Sets the availability for a particular doctor ID for a particular day.
 
     @param request is a json data structure with the following elements:
-        test
+        doctorID
+        day
+        startTime
+        endTime
     @return a json object containing success code and doctor ID.
         
     """
 
     print("Calling API function doctor.set_availability(request).")
 
-    response = None
+    # Build availability details.
+    doctorID = request.json['doctorID']
+    day = request.json['day']
+    startTime = request.json['startTime']
+    endTime = request.json['endTime']
+
+    # Add availability to table in database.
+    new_note = DoctorAvailability(doctorID, day, startTime, endTime)
+    db.session.update(new_note).where(day=day)
+    db.session.commit()
+
+    # Provide feedback to user.
+    response = jsonify({"status": "Successful", "action": "set-availability", "id": doctorID})
+    response.status_code = 200
     return response
 
 def test():
