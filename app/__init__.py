@@ -29,4 +29,4 @@ if 'gcpMySQL' in config:
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
-from app.routes import routes, patient_api
+from app.routes import routes, patient_api, clerk_api
