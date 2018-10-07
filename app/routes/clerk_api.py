@@ -12,30 +12,66 @@ from app.api import clerk as api
 
 @app.route('/api/clerk/add/', methods=['POST'])
 def add_appointment():
+    """Flask app route endpoint for clerk API.
+    
+    @return API function call.
+    
+    """
+
     print("Calling endpoint /api/clerk/add.")
     return api.add_appointment(request)
 
 @app.route('/api/clerk/get_by_id/', methods=['GET'])
 def get_appointments_by_id():
+    """Flask app route endpoint for clerk API.
+    
+    @return API function call.
+    
+    """
+
     print("Calling endpoint /api/clerk/get_by_id.")
     return api.get_appointments_by_id(request.args.get('id'))
 
 @app.route('/api/clerk/get_by_patient/', methods=['GET'])
 def get_appointments_by_patient():
+    """Flask app route endpoint for clerk API.
+    
+    @return API function call.
+    
+    """
+
     print("Calling endpoint /api/clerk/get_by_patient.")
     return api.get_appointments_by_patient(request.args.get('patientID'))
 
 @app.route('/api/clerk/get_by_doctor/', methods=['GET'])
 def get_appointments_by_doctor():
+    """Flask app route endpoint for clerk API.
+    
+    @return API function call.
+    
+    """
+
     print("Calling endpoint /api/clerk/get_by_doctor.")
     return api.get_appointments_by_doctor(request.args.get('doctorID'))
 
 @app.route('/api/clerk/delete/', methods=['DELETE'])
 def delete_appointment():
+    """Flask app route endpoint for clerk API.
+    
+    @return API function call.
+    
+    """
+
     print("Calling endpoint /api/clerk/delete.")
     return api.delete_appointment(request.args.get('id'))
 
 @app.route('/api/clerk/test/', methods=['GET'])
 def clerk_api_test():
+    """Flask app route endpoint for clerk API.
+    
+    @return API function call.
+    
+    """
+    
     print("Calling endpoint /api/clerk/test.")
     return api.test()
