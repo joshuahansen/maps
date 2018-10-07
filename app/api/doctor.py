@@ -12,10 +12,13 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 
 from app import app, db, ma
+from app.database_tables.doctor import Doctor, DoctorSchema
 from app.database_tables.patient import Patient, PatientSchema
 from app.database_tables.patient_notes import PatientNotes, PatientNotesSchema
 from app.database_tables.doctor_availability import DoctorAvailability, DoctorAvailabilitySchema
 
+doctor_schema = DoctorSchema()
+doctor_schema = DoctorSchema(many=True)
 patient_schema = PatientSchema()
 patient_schema = PatientSchema(many=True)
 patient_notes_schema = PatientNotesSchema()
@@ -23,8 +26,39 @@ patient_notes_schema = PatientNotesSchema(many=True)
 doctor_availability_schema = DoctorAvailabilitySchema()
 doctor_availability_schema = DoctorAvailabilitySchema(many=True)
 
+def get_doctor(request):
+    """Reads a particular doctor for a particular ID.
+
+    @param request is a single variable representing the doctor ID.
+    @return a json object containing all corresponding database records.
+
+    """
+
+    print("Calling API function doctor.get_doctor(request).")
+
+    doctor = Doctor.query.filter_by(id=request)
+    result = doctor_schema.dump(doctor)
+    response = jsonify(result.data)
+    response.status_code = 200
+    return response
+
+def get_all_doctors():
+    """Reads all doctors from the database.
+
+    @return a json object containing all corresponding database records.
+
+    """
+
+    print("Calling API function doctor.get_all_doctors().")
+
+    doctor = Doctor.query.all()
+    result = doctor_schema.dump(doctor)
+    response = jsonify(result.data)
+    response.status_code = 200
+    return response
+
 def get_patient(request):
-    """Reads all patients for a particular ID.
+    """Reads a particular patient for a particular ID.
 
     @param request is a single variable representing the patient ID.
     @return a json object containing all corresponding database records.

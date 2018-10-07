@@ -10,6 +10,16 @@ from flask import request
 from app import app
 from app.api import doctor as api
 
+@app.route('/api/doctor/get_doctor/', methods=['GET'])
+def get_doctor():
+    print("Calling endpoint /api/doctor/get_doctor.")
+    return api.get_doctor(request.args.get('id'))
+
+@app.route('/api/doctor/get_all_doctors/', methods=['GET'])
+def get_all_doctors():
+    print("Calling endpoint /api/doctor/get_all_doctors.")
+    return api.get_all_doctors()
+
 @app.route('/api/doctor/get_patient/', methods=['GET'])
 def get_patient():
     print("Calling endpoint /api/doctor/get_patient.")
