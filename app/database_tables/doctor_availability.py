@@ -7,40 +7,25 @@
 # Authors: Adam Young, Joshua Hansen, Lohgan Nash, Zach Wingrave
 ##
 
-import configparser
 import MySQLdb.cursors
-from flask_sqlalchemy import SQLAlchemy
-from flask_marshmallow import Marshmallow
-from app import app
-
-config = configparser.ConfigParser()
-config.read('config.ini')
-
-if 'gcpMySQL' in config:
-    HOST = config['gcpMySQL']['host']
-    USER = config['gcpMySQL']['user']
-    PASS = config['gcpMySQL']['pass']
-    DBNAME = config['gcpMySQL']['db']
-
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://{}:{}@{}/{}'.format(USER,PASS,HOST,DBNAME)
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-db = SQLAlchemy(app)
-ma = Marshmallow(app)
+from app import app, db, ma
 
 class DoctorAvailability(db.Model):
+    __tablename__ = 'doctoravailability'
     id = db.Column(db.Integer, primary_key=True)
     doctor_id = db.Column(db.Integer)
-    startDate = db.Column(db.DateTime)
-    endDate = db.Column(db.DateTime)
+    day = db.Column(db.Integer)
+    startTime = db.Column(db.String(100))
+    endTime = db.Column(db.String(100))
 
-    def __init__(self, doctor_id, startDate, endDate):
+    def __init__(self, doctor_id, day, startTime, endTime):
         '''Initialize Doctor Availability class'''
         self.doctor_id = doctor_id
-        self.startDate = startDate
-        self.endDate = endDate
+        self.day = day
+        self.startTime = startTime
+        self.endTime = endTime
 
-class DoctorAvailibalitySchema(ma.Schema):
+class DoctorAvailabilitySchema(ma.Schema):
     class Meta:
         '''Fields to expose'''
-        fields = ('id', 'doctor_id', 'startDate', 'endDate')
+        fields = ('id', 'doctor_id', 'day', 'startTime', 'endTime')

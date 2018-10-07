@@ -7,43 +7,25 @@
 ##
 
 from flask import request, jsonify
-import configparser
 import MySQLdb.cursors
-from flask_sqlalchemy import SQLAlchemy
-from flask_marshmallow import Marshmallow
 from datetime import datetime
 from datetime import timedelta
 from googleapiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file, client, tools
-from app import app
+from app import app, db, ma
 from app.database_tables.patient import Patient, PatientSchema
+from app.database_tables.patient_notes import PatientNotes, PatientNotesSchema
 from app.database_tables.doctor import Doctor, DoctorSchema
+from app.database_tables.doctor_availability import DoctorAvailability, DoctorAvailabilitySchema
 from app.database_tables.appointment import Appointment, AppointmentSchema
-
-
-config = configparser.ConfigParser()
-config.read('config.ini')
-
-if 'gcpMySQL' in config:
-    HOST = config['gcpMySQL']['host']
-    USER = config['gcpMySQL']['user']
-    PASS = config['gcpMySQL']['pass']
-    DBNAME = config['gcpMySQL']['db']
-
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://{}:{}@{}/{}'.format(USER,PASS,HOST,DBNAME)
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-if 'googleCalendar' in config:
-    mapsCalendarID = config['googleCalendar']['calendarID']
-
-db = SQLAlchemy(app)
-ma = Marshmallow(app)
 
 patient_schema = PatientSchema()
 patient_schema = PatientSchema(many=True)
 doctor_schema = DoctorSchema()
 doctor_schema = DoctorSchema(many=True)
+doctor_availability_schema = DoctorAvailabilitySchema()
+doctor_availability_schema = DoctorAvailabilitySchema(many=True)
 
 def get_patient(patient_id):
     '''Return a patient's data in JSON format'''
@@ -123,7 +105,7 @@ def make_appointment(request):
         creds = tools.run_flow(flow, store)
     service = build('calendar', 'v3', http=creds.authorize(Http()))
     
-    patientID = request.json['patientid']
+    patient_id = request.json['patient']
     startDate = request.json['startDate']
     endDate = request.json['endDate']
     doctor_id = request.json['doctor']
@@ -132,10 +114,10 @@ def make_appointment(request):
     location = request.json['location']
     
     doctor = Doctor.query.filter_by(id=doctor_id)
-    doctor_result = doctor_schema.dump(doctor)
+    doctor_result = doctor_schema.dump(doctor).data[0]
     
-    patient = patient.query.filter_by(id=patient_id)
-    patient_result = patient_schema.dump(patient)
+    patient = Patient.query.filter_by(id=patient_id)
+    patient_result = patient_schema.dump(patient).data[0]
 
 
     time_start = "{}".format(startDate)
@@ -166,23 +148,25 @@ def make_appointment(request):
         },
         'attendees': [
             {
-                'email': doctor_result.email,
-                'email': patient_result.email
+                'email': doctor_result['email'],
+                'email': patient_result['email']
             }
         ],
         'transparency': 'opaque'
     }
-    event = service.events().insert(calendarId=doctor_result.calendarID, body=event).execute()
+    calendarID = doctor_result['calendarID']
+    print(calendarID)
+    event = service.events().insert(calendarId=calendarID, body=event).execute()
     print('Event created: {}'.format(event.get('htmlLink')))
 
-    response = jsonify({"status": "Successful", "action": "make-appointment", "id": patientID})
+    response = jsonify({"status": "Successful", "action": "make-appointment", "id": patient_id})
     response.status_code = 200
 
     return response
 
-def get_availibility(request):
+def get_availability(request):
     '''
-    Return availibility of doctors on certain day
+    Return availability of doctors on certain day
     '''
     # If modifying these scopes, delete the file token.json.
     SCOPES = 'https://www.googleapis.com/auth/calendar'
@@ -193,23 +177,35 @@ def get_availibility(request):
         creds = tools.run_flow(flow, store)
     service = build('calendar', 'v3', http=creds.authorize(Http()))
     
-    startDate = request.json['startDate']
-    endDate = request.json['endDate']
     doctor_id = request.json['doctorID']
+    date = datetime.strptime(request.json['date'], "%Y-%m-%d")
+    day = date.weekday()
 
-
-    doctor = Doctor.query.filter_by(id=doctor_id)
-    doctor_result = doctor_schema.dump(doctor)
+    print(date)
+    print(day)
+    doctor_availability = DoctorAvailability.query.filter_by(doctor_id = doctor_id, day = day)
+    doctor_availability_result = doctor_availability_schema.dump(doctor_availability).data[0]
     
-    start_time = "{}".format(startDate)
-    end_time = "{}".format(endDate)
+    startTime = doctor_availability_result['startTime']
+    endTime = doctor_availability_result['endTime']
+
+    print(doctor_availability_result)
+    print(startTime)
+    print(endTime)
+    
+    doctor = Doctor.query.filter_by(id=doctor_id)
+    doctor_result = doctor_schema.dump(doctor).data[0]
+    
+    dateString = date.strftime("%Y-%m-%d")
+    start_time = "{0}T{1}:00+10:00".format(dateString, startTime)
+    end_time = "{0}T{1}:00+10:00".format(dateString, endTime)
     
     freebusy = {
             "timeMin": start_time,
             "timeMax": end_time,
             "items": [
                 {
-                    "id": doctor_result.calendarID
+                    "id": doctor_result['calendarID']
                 }
             ],
             "timeZone": "Australia/Melbourne"
@@ -217,22 +213,46 @@ def get_availibility(request):
     
     freebusyResponse = service.freebusy().query(body=freebusy).execute()
 
-    print(freebusyResponse)
+    response = jsonify({"availability": doctor_availability_result, "busy": freebusyResponse['calendars'][doctor_result['calendarID']]['busy']})
+    response.status_code = 200
+    '''
+    response = jsonify({"data": "failed to recieved doctor {} availability".format(doctor_id)})
+    response.status_code = 404
+    '''    
+    return response
 
-    response = jsonify(freebusyResponse['calendars'][doctor_result.calendarID]['busy'])
+def get_doctors():
+    '''Get all doctors for patients page selection'''
+    all_doctors = Doctor.query.all()
+    result = doctor_schema.dump(all_doctors)
+    
+    response = jsonify(result.data)
+    response.status_code = 200
+    return response
+
+
+def face_dectected(request):
+    '''Add new patient to the queue'''
+    request.json['patient']
+
+    response = jsonify({"data": "Patient added to the queue"})
     response.status_code = 200
     return response
     
 def reset():
-    # Uncomment to delete all tables in database
-    db.drop_all()
-    db.session.commit()
-    
-    # Uncomment to add all tables to the database
-    db.create_all()
-    db.session.commit()
+    try:
+        # Uncomment to delete all tables in database
+        db.drop_all()
+        # Uncomment to add all tables to the database
+        db.create_all()
+        db.session.commit()
 
-    response = jsonify({"data": "Database was reset"})
+        response = jsonify({"data": "Database was reset"})
 
-    response.status_code = 200
-    return response
+        response.status_code = 200
+    except StandardError as err:
+        response = jsonify({"data": "Database was not reset", "error": err})
+
+        response.status_code = 404
+    finally:
+        return response
