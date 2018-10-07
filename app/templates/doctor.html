@@ -150,15 +150,15 @@
               const button = document.createElement('td');
               button.setAttribute('class', 'btn-td');
 
-              const input = document.createElement('input');
-              input.setAttribute('class', 'btn btn-primary my-btn');
-              input.setAttribute('type', 'button');
-              input.setAttribute('value', patient.id);
-              input.setAttribute('data-toggle', 'modal');
-              input.setAttribute('data-target', '#mymodal');
-              input.setAttribute('onclick', 'loadModal(this.value);');
+              const btn = document.createElement('button');
+              btn.setAttribute('class', 'my-btn');
+              btn.setAttribute('type', 'button');
+              btn.setAttribute('value', patient.id);
+              btn.setAttribute('data-toggle', 'modal');
+              btn.setAttribute('data-target', '#mymodal');
+              btn.setAttribute('onclick', 'loadModal(this.value);');
 
-              input.textContent = 'View';
+              btn.textContent = 'View';
 
               table.appendChild(row);
               row.appendChild(id);
@@ -166,7 +166,9 @@
               row.appendChild(email);
               row.appendChild(dob);
               row.appendChild(button);
-              button.appendChild(input);
+
+              button.appendChild(btn);
+              
 
             });
 
@@ -196,7 +198,7 @@
 
           data.forEach(patient => {
           const title = document.getElementById('modal-t');
-          title.textContent = patient.firstname;
+          title.textContent = patient.firstname + " " + patient.lastname;
 
           const address = document.createElement('p');
           address.textContent = "Address: ".concat(patient.address);
@@ -264,7 +266,7 @@
   <div class="custom-select">
       <select id="select-doctor">
           <option disabled selected value> -- select an option -- </option>
-          
+
       </select>
   </div>
 
