@@ -6,18 +6,18 @@
 # Authors: Adam Young, Joshua Hansen, Lohgan Nash, Zach Wingrave
 ##
 
-import configparser
 import MySQLdb.cursors
 from flask import request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
-from app import app
+from oauth2client import file, client, tools
+from googleapiclient.discovery import build
+from httplib2 import Http
+
+from app import app, db, ma
 from app.database_tables.appointment import Appointment, AppointmentSchema
 from app.database_tables.patient import Patient, PatientSchema
 from app.database_tables.doctor import Doctor, DoctorSchema
-
-config = configparser.ConfigParser()
-config.read('config.ini')
 
 appointment_schema = AppointmentSchema()
 appointment_schema = AppointmentSchema(many=True)
@@ -25,18 +25,6 @@ patient_schema = PatientSchema()
 patient_schema = PatientSchema(many=True)
 doctor_schema = DoctorSchema()
 doctor_schema = DoctorSchema(many=True)
-
-if 'gcpMySQL' in config:
-    HOST = config['gcpMySQL']['host']
-    USER = config['gcpMySQL']['user']
-    PASS = config['gcpMySQL']['pass']
-    DBNAME = config['gcpMySQL']['db']
-
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://{}:{}@{}/{}'.format(USER,PASS,HOST,DBNAME)
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-db = SQLAlchemy(app)
-ma = Marshmallow(app)
 
 def add_appointment(request):
     """Adds a new appointment to the calendar.
@@ -64,6 +52,8 @@ def add_appointment(request):
         creds = tools.run_flow(flow, store)
     service = build('calendar', 'v3', http=creds.authorize(Http()))
     
+    print("Building event details.")
+
     # Build event details.
     patientID = request.json['patientID']
     doctorID = request.json['doctorID']
@@ -73,13 +63,19 @@ def add_appointment(request):
     location = request.json['location']
     description = request.json['description']
     
+    print("Getting doctor information from the database.")
+
     # Get doctor information from db.
     doctor = Doctor.query.filter_by(id=doctorID)
-    doctor_result = doctor_schema.dump(doctor)
+    doctor_result = doctor_schema.dump(doctor).data[0]
     
+    print("Getting patient information from the database.")
+
     # Get patient information from db.
     patient = Patient.query.filter_by(id=patientID)
-    patient_result = patient_schema.dump(patient)
+    patient_result = patient_schema.dump(patient).data[0]
+
+    print("Building the event.")
 
     time_start = "{}".format(startDateTime)
     time_end   = "{}".format(endDateTime)
@@ -104,21 +100,25 @@ def add_appointment(request):
         },
         'attendees': [
             {
-                'email': doctor_result.email,
-                'email': patient_result.email
+                'email': doctor_result['email'],
+                'email': patient_result['email']
             }
         ],
         'transparency': 'opaque'
     }
 
+    print("Adding the appointment to the calendar.")
+
     # Add appointment to calendar.
-    event = service.events().insert(calendarId=doctor_result.calendarID, body=event).execute()
+    event = service.events().insert(calendarId=doctor_result['calendarID'], body=event).execute()
     print('Event created: {}'.format(event.get('htmlLink')))
 
     # Add appointment to table in database.
-    new_appointment = Appointment(patientID, doctorID, startDate, endDate)
+    new_appointment = Appointment(patientID, doctorID, time_start, time_end)
     db.session.add(new_appointment)
     db.session.commit()
+
+    print("Done.")
 
     # Provide feedback to user.
     response = jsonify({"status": "Successful", "action": "make-appointment", "id": patientID})

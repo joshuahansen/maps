@@ -12,29 +12,18 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from datetime import datetime
 from datetime import timedelta
-from app.database_tables.patient import Doctor
-
-
-config = configparser.ConfigParser()
-config.read('../config.ini')
-
-if 'gcpMySQL' in config:
-    HOST = config['gcpMySQL']['host']
-    USER = config['gcpMySQL']['user']
-    PASS = config['gcpMySQL']['pass']
-    DBNAME = config['gcpMySQL']['db']
-
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://{}:{}@{}/{}'.format(USER,PASS,HOST,DBNAME)
+from app import app, db, ma
+from app.database_tables.doctor import Doctor
 
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
 # If modifying these scopes, delete the file token.json.
 SCOPES = 'https://www.googleapis.com/auth/calendar'
-store = file.Storage('../token.json')
+store = file.Storage('token.json')
 creds = store.get()
 if not creds or creds.invalid:
-    flow = client.flow_from_clientsecrets('../credentials.json', SCOPES)
+    flow = client.flow_from_clientsecrets('calendar-config.json', SCOPES)
     creds = tools.run_flow(flow, store)
 service = build('calendar', 'v3', http=creds.authorize(Http()))
 
@@ -47,7 +36,6 @@ def main():
     lname = input("Enter Last Name: ")
     email = input("Enter email address: ")
     calendarName = input("What would you like to call the calendar?")
-
     timezone = "Australia/Melbourne"
 
     created_calendar = add_calendar(calendarName, timezone)

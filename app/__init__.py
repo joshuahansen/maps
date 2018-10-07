@@ -14,8 +14,6 @@ from flask_marshmallow import Marshmallow
 
 app = Flask(__name__)
 
-from app.routes import routes, patient_api, clerk_api
-
 config = configparser.ConfigParser()
 config.read('config.ini')
 
@@ -30,3 +28,5 @@ if 'gcpMySQL' in config:
 
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
+
+from app.routes import routes, patient_api, clerk_api
