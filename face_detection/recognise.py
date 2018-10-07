@@ -7,7 +7,11 @@
 ## Acknowledgement
 ## This code is adapted from:
 ## https://www.pyimagesearch.com/2018/06/18/face-recognition-with-opencv-python-and-deep-learning/
-
+'''
+Recognise runs and checks all faces if they match registered faces
+When a matching face is detected send name to patient api
+Display name on sense hat LED matrix
+'''
 # import the necessary packages
 from imutils.video import VideoStream
 import face_recognition
@@ -17,6 +21,7 @@ import pickle
 import time
 import cv2
 from sense_hat import SenseHat
+import requests
 
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
@@ -104,6 +109,12 @@ while True:
 
         # print to console, identified person
         print('Person found: {}'.format(name))
+        try:
+            # send to patient api to store in patient queue
+            r = requests.post('http://localhost:5000/api/patient/face-detection/', json={'patient': name})
+            print(r)
+        except:
+            print("Error connecting to api")
 
         # print to sense hat LED matrix
         sense.show_message(name)

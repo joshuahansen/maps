@@ -50,7 +50,7 @@ def get_doctors():
 
 @app.route('/api/patient/face-detection/', methods=['POST'])
 def face_detected():
-    return api.face_derected(request)
+    return api.face_detected(request)
 
 @app.route('/api/reset/', methods=['GET'])
 def reset():

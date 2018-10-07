@@ -3,11 +3,12 @@
 # 		python3 encode.py
 # OR specifying the dataset, encodings and detection method
 # 		python3 encode.py -i dataset -e encodings.pickle -d cnn
-
 ## Acknowledgement
 ## This code is adapted from:
 ## https://www.pyimagesearch.com/2018/06/18/face-recognition-with-opencv-python-and-deep-learning/
-
+'''
+Script to encode the stored images in the dataset directory to later run facial recognition
+'''
 # import the necessary packages
 from imutils import paths
 import face_recognition
