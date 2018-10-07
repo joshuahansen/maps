@@ -103,3 +103,9 @@ body {
 .btn-td {
   width: 150px;
 }
+
+.custom-select {
+  width: 1000px;
+  margin: 0 auto;
+  margin-top: 50px;
+}

@@ -21,6 +21,44 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
+  <script type="text/javascript">
+
+    function loadDoctors() {
+      
+      const select = document.getElementById('select-doctor')
+      var request = new XMLHttpRequest();
+      request.open('GET', '/api/doctor/get_all_doctors/', true);
+
+      request.onload = function () {
+        
+        var data = JSON.parse(this.response);
+
+        if (request.status >= 200 && request.status < 400) {
+
+          data.forEach(doctor => {
+
+            const option = document.createElement('option');
+            option.setAttribute('value', doctor.id); 
+            
+            option.textContent = doctor.firstname + doctor.lastname;
+
+            select.appendChild(option);
+
+          });
+
+        } else {
+            console.log('error');
+          }
+      }
+
+      request.send();
+
+    }
+
+    window.onload = loadDoctors;
+
+  </script>
+
 </head>
 
 <header>
@@ -49,6 +87,12 @@
 </header>
 
 <body>
+
+    <div class="custom-select">
+        <select id="select-doctor">
+          
+        </select>
+    </div>
 
   <div class="calendar-wrapper">
     <iframe src="https://calendar.google.com/calendar/embed?src=9f6tam9gbb9bh6s6lqh415c2mc%40group.calendar.google.com&ctz=Australia%2FMelbourne"
