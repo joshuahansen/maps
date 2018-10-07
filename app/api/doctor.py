@@ -13,10 +13,13 @@ from flask_marshmallow import Marshmallow
 
 from app import app, db, ma
 from app.database_tables.patient import Patient, PatientSchema
+from app.database_tables.patient_notes import PatientNotes, PatientNotesSchema
 from app.database_tables.doctor_availability import DoctorAvailability, DoctorAvailabilitySchema
 
 patient_schema = PatientSchema()
 patient_schema = PatientSchema(many=True)
+patient_notes_schema = PatientNotesSchema()
+patient_notes_schema = PatientNotesSchema(many=True)
 doctor_availability_schema = DoctorAvailabilitySchema()
 doctor_availability_schema = DoctorAvailabilitySchema(many=True)
 
@@ -68,7 +71,7 @@ def set_availability(request):
     """Sets the availability for a particular doctor ID for a particular day.
 
     @param request is a json data structure with the following elements:
-        doctorID
+        doctor_id
         day
         startTime
         endTime
@@ -79,18 +82,22 @@ def set_availability(request):
     print("Calling API function doctor.set_availability(request).")
 
     # Build availability details.
-    doctorID = request.json['doctorID']
+    doctor_id = request.json['doctor_id']
     day = request.json['day']
     startTime = request.json['startTime']
     endTime = request.json['endTime']
 
     # Add availability to table in database.
-    new_note = DoctorAvailability(doctorID, day, startTime, endTime)
-    db.session.update(new_note).where(day=day)
+    results = DoctorAvailability.query.filter_by(doctor_id=doctor_id, day=day)
+    if results.count() <= 0:
+        new_availability = DoctorAvailability(doctor_id, day, startTime, endTime)
+        db.session.add(new_availability)
+    else:
+        results.update(request.json)
     db.session.commit()
 
     # Provide feedback to user.
-    response = jsonify({"status": "Successful", "action": "set-availability", "id": doctorID})
+    response = jsonify({"status": "Successful", "action": "set-availability", "id": doctor_id})
     response.status_code = 200
     return response
 
