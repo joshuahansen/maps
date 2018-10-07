@@ -12,17 +12,25 @@ import MySQLdb.cursors
 from app import app, db, ma
 
 class PatientQueue(db.Model):
+    '''
+    Patient queue class stores the patients when they arrive in
+    the reception from the patient pi
+    '''
     __tablename__ = 'patientqueue'
     id = db.Column(db.Integer, primary_key=True)
     patient_id = db.Column(db.Integer)
     arrival = db.Column(db.DateTime)
 
     def __init__(self, patient_id, arrival):
-        '''Initialize Patient queue class'''
+        '''
+        Constructor to initialize Patient queue class
+        '''
         self.patient_id = patient_id
         self.arrival = arrival
 
 class PatientQueueSchema(ma.Schema):
     class Meta:
-        '''Fields to expose'''
+        '''
+        Fields to expose
+        '''
         fields = ('id', 'patient_id', 'arrival')

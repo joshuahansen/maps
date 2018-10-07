@@ -31,7 +31,11 @@ doctor_availability_schema = DoctorAvailabilitySchema()
 doctor_availability_schema = DoctorAvailabilitySchema(many=True)
 
 def get_patient(patient_id):
-    '''Return a patient's data in JSON format'''
+    '''
+    Return a patient's data in JSON format
+
+    @param patient_id is a integer patient id
+    '''
     patient = Patient.query.filter_by(id=patient_id)
 
     result = patient_schema.dump(patient)
@@ -41,7 +45,9 @@ def get_patient(patient_id):
     return response
 
 def get_all_patients():
-    '''Return all patient's data in JSON format'''
+    '''
+    Return all patient's data in JSON format
+    '''
     all_patients = Patient.query.all()
     result = patient_schema.dump(all_patients)
     
@@ -50,7 +56,24 @@ def get_all_patients():
     return response
 
 def add_patient(request):
-    '''Add  a new patient to the database'''
+    '''
+    Add  a new patient to the database
+    
+    @param request is a json object with the following elements:
+        firstname
+        lastname
+        phone
+        email
+        gender
+        dob
+        address
+        city
+        state
+        postcode
+    @return json object with elements:
+        status
+        action
+    '''
     firstname = request.json['firstname']
     lastname = request.json['lastname']
     phone = request.json['phone']
@@ -74,7 +97,15 @@ def add_patient(request):
     return response
     
 def update_patient(patient_id, data):
-    '''Update a current patients data'''
+    '''
+    Update a current patients data
+    
+    @param patient_id integer of the patient wishing to update
+    @param data json object with patient details
+    @returns json object with elements
+        status
+        action
+    '''
     Patient.query.filter_by(id=patient_id).update(data)
 
     db.session.commit()
@@ -86,7 +117,14 @@ def update_patient(patient_id, data):
     return response
 
 def delete_patient(patient_id):
-    '''Delete a patient from the database'''
+    '''
+    Delete a patient from the database
+    
+    @param patient_id integer patient id to be deleted
+    @return json object awith elements:
+        status
+        action
+    '''
     Patient.query.filter_by(id=patient_id).delete()
     
     db.session.commit()
@@ -97,7 +135,24 @@ def delete_patient(patient_id):
     return response
 
 def make_appointment(request):
-    '''Add  a new appointment to the database'''
+    '''
+    Add  a new appointment to the database
+    Also creates a new appointment in the doctors calendar
+
+    @param request json object with the elements:
+        patient
+        startDate
+        endDate
+        doctor
+        description
+        summary
+        location
+
+    @return json object with elements:
+        status
+        action
+        id
+    '''
     
     # If modifying these scopes, delete the file token.json.
     SCOPES = 'https://www.googleapis.com/auth/calendar'
@@ -170,6 +225,14 @@ def make_appointment(request):
 def get_availability(request):
     '''
     Return availability of doctors on certain day
+
+    @param request json object with elements:
+        date
+        doctorID
+    
+    @return json object:
+        availability
+        busy []
     '''
     # If modifying these scopes, delete the file token.json.
     SCOPES = 'https://www.googleapis.com/auth/calendar'
@@ -184,18 +247,12 @@ def get_availability(request):
     date = datetime.strptime(request.json['date'], "%Y-%m-%d")
     day = date.weekday()
 
-    print(date)
-    print(day)
     doctor_availability = DoctorAvailability.query.filter_by(doctor_id = doctor_id, day = day)
     doctor_availability_result = doctor_availability_schema.dump(doctor_availability).data[0]
     
     startTime = doctor_availability_result['startTime']
     endTime = doctor_availability_result['endTime']
 
-    print(doctor_availability_result)
-    print(startTime)
-    print(endTime)
-    
     doctor = Doctor.query.filter_by(id=doctor_id)
     doctor_result = doctor_schema.dump(doctor).data[0]
     
@@ -218,14 +275,15 @@ def get_availability(request):
 
     response = jsonify({"availability": doctor_availability_result, "busy": freebusyResponse['calendars'][doctor_result['calendarID']]['busy']})
     response.status_code = 200
-    '''
-    response = jsonify({"data": "failed to recieved doctor {} availability".format(doctor_id)})
-    response.status_code = 404
-    '''    
+    
     return response
 
 def get_doctors():
-    '''Get all doctors for patients page selection'''
+    '''
+    Get all doctors for patients page selection
+
+    @return json object with doctor details
+    '''
     all_doctors = Doctor.query.all()
     result = doctor_schema.dump(all_doctors)
     
@@ -235,7 +293,15 @@ def get_doctors():
 
 
 def face_detected(request):
-    '''Add new patient to the queue'''
+    '''
+    Add new patient to the queue when detected with camera
+
+    @param request json object
+        patient with form firstname_lastname
+
+    @return json object:
+        data
+    '''
     print(request.json)
     patient_name = request.json['patient']
     fname, lname = patient_name.split("_")
@@ -268,6 +334,12 @@ def face_detected(request):
     return response
     
 def reset():
+    '''
+    Used to reset the database if needed
+    
+    @return json object
+        data
+    '''
     try:
         # Uncomment to delete all tables in database
         #db.drop_all()
