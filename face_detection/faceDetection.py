@@ -5,7 +5,10 @@
 ## Acknowledgement
 ## This code is adapted from:
 ## https://www.pyimagesearch.com/2018/06/18/face-recognition-with-opencv-python-and-deep-learning/
-
+'''
+Face detection registration to take new images for facial recognition
+Requires user to have 10 normal pictures and 10 smiling pictures
+'''
 import numpy as np
 import cv2
 import os
@@ -21,6 +24,9 @@ c = (0,0,0)
 
 # display a box on the LED matrix
 def faceLED():
+    '''
+    Display a green box on led matrix
+    '''
     face = [
         g, g, g, g, g, g, g, g,
         g, c, c, c, c, c, c, g,
@@ -35,6 +41,9 @@ def faceLED():
 
 # display eyes on the LED matrix
 def eyeLED():
+    '''
+    Display blue eye squares on LED matrix
+    '''
     # left eye
     sense.set_pixel(1,2,b)
     sense.set_pixel(1,3,b)
@@ -48,6 +57,9 @@ def eyeLED():
 
 # display smile on the LED matrix
 def smileLED():
+    '''
+    Display red rectangle to indecate smile
+    '''
     sense.set_pixel(2,5,r)
     sense.set_pixel(3,5,r)
     sense.set_pixel(4,5,r)

@@ -11,6 +11,10 @@ import MySQLdb.cursors
 from app import app, db, ma
 
 class Appointment(db.Model):
+    '''
+    Appointment class for sqlalchemy database input.
+    stored all relevate details for doctor appointments
+    '''
     __tablename__ = 'appointments'
     id = db.Column(db.Integer, primary_key=True)
     patientID = db.Column(db.Integer)
@@ -19,7 +23,9 @@ class Appointment(db.Model):
     endDateTime = db.Column(db.DateTime)
 
     def __init__(self, patientID, doctorID, startDate, endDate):
-        '''Initialize Appointment class'''
+        '''
+        Constructor to initialize Appointment class
+        '''
         self.patientID = patientID
         self.doctorID = doctorID
         self.startDateTime = startDate
@@ -27,5 +33,7 @@ class Appointment(db.Model):
 
 class AppointmentSchema(ma.Schema):
     class Meta:
-        '''Fields to expose'''
+        '''
+        Fields to expose
+        '''
         fields = ('id', 'patientID', 'doctorID', 'startDateTime', 'endDateTime')

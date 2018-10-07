@@ -7,7 +7,11 @@
 ## Acknowledgement
 ## This code is adapted from:
 ## https://www.pyimagesearch.com/2018/06/18/face-recognition-with-opencv-python-and-deep-learning/
-
+'''
+Recognise runs and checks all faces if they match registered faces
+When a matching face is detected send name to patient api
+Display name on sense hat LED matrix
+'''
 # import the necessary packages
 from imutils.video import VideoStream
 import face_recognition

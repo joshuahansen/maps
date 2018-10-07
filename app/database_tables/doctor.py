@@ -11,6 +11,9 @@ import MySQLdb.cursors
 from app import app, db, ma
 
 class Doctor(db.Model):
+    '''
+    Doctor class to store doctor information in the database
+    '''
     __tablename__ = 'doctors'
     id = db.Column(db.Integer, primary_key=True)
     firstname = db.Column(db.String(80))
@@ -19,7 +22,9 @@ class Doctor(db.Model):
     calendarID = db.Column(db.String(255))
 
     def __init__(self, firstname, lastname, email, calendarID):
-        '''Initialize Doctor class'''
+        '''
+        Constructor to initialize Doctor class
+        '''
         self.firstname = firstname
         self.lastname = lastname
         self.email = email
@@ -27,5 +32,7 @@ class Doctor(db.Model):
 
 class DoctorSchema(ma.Schema):
     class Meta:
-        '''Fields to expose'''
+        '''
+        Fields to expose
+        '''
         fields = ('id', 'firstname', 'lastname', 'email', 'calendarID')
