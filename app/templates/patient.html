@@ -7,8 +7,9 @@
         {% from "_formhelper.html" import render_field %}
         <form method="POST">
                 {{ form.csrf_token }}
-                {{ render_field(form.doctor) }}
-                {{ render_field(form.date) }}
+                {% for field in form if field.widget.input_type != 'hidden' %}
+                    {{ render_field(field) }}
+                {% endfor %}
 
                 <input type="submit" class='btn btn-primary' value="Select Date">
         </form>
