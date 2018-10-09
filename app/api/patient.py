@@ -25,6 +25,8 @@ patient_schema = PatientSchema()
 patient_schema = PatientSchema(many=True)
 patient_queue_schema = PatientQueueSchema()
 patient_queue_schema = PatientQueueSchema(many=True)
+patient_notes_schema = PatientNotesSchema()
+patient_notes_schema = PatientNotesSchema(many=True)
 doctor_schema = DoctorSchema()
 doctor_schema = DoctorSchema(many=True)
 doctor_availability_schema = DoctorAvailabilitySchema()
@@ -37,8 +39,15 @@ def get_patient(patient_id):
     @param patient_id is a integer patient id
     '''
     patient = Patient.query.filter_by(id=patient_id)
+    patientnotes = PatientNotes.query.filter_by(patient_id=patient_id)
 
     result = patient_schema.dump(patient)
+    resultNotes = patient_notes_schema.dump(patientnotes)
+
+    if len(result.data) >= 1:
+        if len(resultNotes.data) >= 1:
+            # Add notes to result
+            result.data[0]['patient_notes'] = resultNotes.data[len(resultNotes.data)-1]
 
     response = jsonify(result.data)
     response.status_code = 200

@@ -23,7 +23,11 @@
 
   <script type="text/javascript">
 
-    function addNote(id, diagnoses, notes) {
+    function addNote() {
+
+      var id = document.getElementById('m-pid').getAttribute('data-pid')
+      var diagnoses = document.getElementById('diagnoses').value
+      var notes = document.getElementById('notes').value
 
       var request = new XMLHttpRequest();
       request.open('POST', '/api/doctor/add_note/', true);
@@ -183,7 +187,13 @@
       function loadModal(val) {
 
         const body = document.getElementById('modal-b');
-	body.innerHTML = '';
+
+        body.innerHTML = '';
+        var diagnoses = document.getElementById('diagnoses');
+        var notes = document.getElementById('notes');
+        diagnoses.value = '';
+        notes.value = '';
+
         var url =  "/api/patient/?id="
         var fullURL = url.concat(val);
 
@@ -201,7 +211,9 @@
           title.textContent = patient.firstname + " " + patient.lastname;
 
           const id = document.createElement('p');
+          id.id = 'm-pid'
           id.textContent = "Patient ID: ".concat(patient.id);
+          id.setAttribute("data-pid", patient.id)
           const address = document.createElement('p');
           address.textContent = "Address: ".concat(patient.address);
           const dob = document.createElement('p');
@@ -212,6 +224,11 @@
           email.textContent = "Email: ".concat(patient.email);
           const phone = document.createElement('p');
           phone.textContent = "Phone: ".concat(patient.phone);
+
+          if ('patient_notes' in patient) {
+            notes.value = patient.patient_notes.notes;
+            diagnoses.value = patient.patient_notes.diagnoses;
+          }
 
           body.appendChild(id);
           body.appendChild(address);
