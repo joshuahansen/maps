@@ -2,6 +2,9 @@
 
 MAPS - Medical Appointment System
 
+# API Documentation
+Navigate to: /docs
+
 # Installation
 Development is done within a virtual environment to properly organise project
 dependancies.

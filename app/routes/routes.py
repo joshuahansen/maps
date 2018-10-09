@@ -36,6 +36,6 @@ def doctor():
 def clerk():
     return render_template('clerk.html')
 
-@app.route('/docs/<path:path>')
-def docs(path):
-    return send_from_directory('build/html', path)
+@app.route('/docs/')
+def docs_redir():
+    return redirect('/static/docs/app.api.html')
