@@ -14,8 +14,10 @@ from wtforms.validators import Email,DataRequired
 
 import requests
 from datetime import datetime, timedelta
+from random import randint
 
 class AppointmentForm(FlaskForm):
+    patient = SelectField('Patient', validators=[DataRequired()])
     doctor = SelectField('Doctor', validators=[DataRequired()])
     date = DateTimeField('Desired Appointment Date', format='%d/%m/%Y')
 
@@ -68,14 +70,18 @@ def maps_appointment(config):
     timeArr = []
 
     doctor_list = doctors_list(config['MAPS_API_BASE_URL'])
+    patient_list = patients_list(config['MAPS_API_BASE_URL'])
 
+    form.patient.choices = patient_list
     form.doctor.choices = doctor_list
 
     if form.validate_on_submit():
         print("Valid")
         formwithtime = ApptWithTime()
+        formwithtime.patient.choices = patient_list
         formwithtime.doctor.choices = doctor_list
 
+        patient = form.patient.data
         doctor = form.doctor.data
         date = form.date.data
 
@@ -142,6 +148,16 @@ def create_patient(form):
 
     r = requests.post("http://localhost:5000/api/patient/", json=payload)
 
+def patients_list(apiurl):
+    r = requests.get(apiurl + "/patient/")
+
+    patient_list = []
+    for pat in r.json():
+        fullname = "{} {}".format(pat['firstname'], pat["lastname"])
+        patient_list.append((str(pat['id']), fullname))
+
+    return patient_list
+
 def doctors_list(apiurl):
     r = requests.get(apiurl + "/patient/doctors/")
 
@@ -189,6 +205,7 @@ def times_list(apiurl, doctor, date):
 
 def make_appointment(apiurl, form, time_list):
     doctor = form.doctor.data
+    patient = form.patient.data
     date = form.date.data.date() # no time please
     selected_slot = int(form.time.data)
 
@@ -196,13 +213,13 @@ def make_appointment(apiurl, form, time_list):
     endtime = time_list[selected_slot+1][1]
 
     payload = {
-        'patient': 1,
+        'patient': patient,
         'startDate': '{}T{}:00'.format(date, starttime),
         'endDate': '{}T{}:00'.format(date, endtime),
         'doctor': doctor,
         'description': 'An Appointment Booking',
-        'summary': '',
-        'location': 'The Clinic'
+        'summary': 'Medical Appointment',
+        'location': 'The Clinic Room 0'+str(randint(0,9))
     }
     r = requests.post("http://localhost:5000/api/patient/make-appointment/", json=payload)
 
