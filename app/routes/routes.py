@@ -6,7 +6,7 @@
 # Authors: Adam Young, Joshua Hansen, Lohgan Nashm, Zach Wingrave
 ##
 
-from flask import redirect, render_template
+from flask import redirect, render_template, send_from_directory
 
 from app import app
 from app import forms
@@ -35,3 +35,7 @@ def doctor():
 @app.route('/clerk')
 def clerk():
     return render_template('clerk.html')
+
+@app.route('/docs/<path:path>')
+def docs(path):
+    return send_from_directory('build/html', path)

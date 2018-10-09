@@ -110,7 +110,9 @@ def maps_appointment_confirmation(config):
     form = ApptWithTime()
 
     doctor_list = doctors_list(config['MAPS_API_BASE_URL'])
+    patient_list = patients_list(config['MAPS_API_BASE_URL'])
     form.doctor.choices = doctor_list
+    form.patient.choices = patient_list
 
     patient = form.patient.data
     doctor = form.doctor.data

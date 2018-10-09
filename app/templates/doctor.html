@@ -156,7 +156,7 @@
               btn.setAttribute('value', patient.id);
               btn.setAttribute('data-toggle', 'modal');
               btn.setAttribute('data-target', '#mymodal');
-              btn.setAttribute('onclick', 'loadModal(this.value);');
+              btn.setAttribute('onclick', 'loadModal('+patient.id+');');
 
               btn.textContent = 'View';
 
@@ -183,7 +183,7 @@
       function loadModal(val) {
 
         const body = document.getElementById('modal-b');
-
+	body.innerHTML = '';
         var url =  "/api/patient/?id="
         var fullURL = url.concat(val);
 
@@ -200,6 +200,8 @@
           const title = document.getElementById('modal-t');
           title.textContent = patient.firstname + " " + patient.lastname;
 
+          const id = document.createElement('p');
+          id.textContent = "Patient ID: ".concat(patient.id);
           const address = document.createElement('p');
           address.textContent = "Address: ".concat(patient.address);
           const dob = document.createElement('p');
@@ -211,6 +213,7 @@
           const phone = document.createElement('p');
           phone.textContent = "Phone: ".concat(patient.phone);
 
+          body.appendChild(id);
           body.appendChild(address);
           body.appendChild(dob);
           body.appendChild(gender);
@@ -253,6 +256,7 @@
             <li class="my-li"><a href="/doctor">Doctor</a></li>
             <li class="my-li"><a href="/patient">Patient</a></li>
             <li class="my-li"><a href="/clerk">Clerk</a></li>
+            <li class="my-li"><a href="/register">Register</a></li>
           </ul>
         </div>
       </div>

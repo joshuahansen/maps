@@ -1,0 +1,124 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module patient</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>patient</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/pi/maps/app/api/patient.py">/home/pi/maps/app/api/patient.py</a></font></td></tr></table>
+    <p><tt>##<br>
+#&nbsp;Medical&nbsp;Appointment&nbsp;System&nbsp;(MAPS)&nbsp;-&nbsp;IoT&nbsp;Sem2&nbsp;2018<br>
+#&nbsp;<br>
+#&nbsp;Patient&nbsp;API&nbsp;file,&nbsp;handels&nbsp;all&nbsp;interactions&nbsp;with&nbsp;the&nbsp;cloud<br>
+#<br>
+#&nbsp;Authors:&nbsp;Adam&nbsp;Young,&nbsp;Joshua&nbsp;Hansen,&nbsp;Lohgan&nbsp;Nash,&nbsp;Zach&nbsp;Wingrave<br>
+##</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="MySQLdb.html">MySQLdb</a><br>
+</td><td width="25%" valign=top><a href="oauth2client.client.html">oauth2client.client</a><br>
+</td><td width="25%" valign=top><a href="oauth2client.file.html">oauth2client.file</a><br>
+</td><td width="25%" valign=top><a href="oauth2client.tools.html">oauth2client.tools</a><br>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-add_patient"><strong>add_patient</strong></a>(request)</dt><dd><tt>Add&nbsp;&nbsp;a&nbsp;new&nbsp;patient&nbsp;to&nbsp;the&nbsp;database<br>
+&nbsp;<br>
+@param&nbsp;request&nbsp;is&nbsp;a&nbsp;json&nbsp;object&nbsp;with&nbsp;the&nbsp;following&nbsp;elements:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;firstname<br>
+&nbsp;&nbsp;&nbsp;&nbsp;lastname<br>
+&nbsp;&nbsp;&nbsp;&nbsp;phone<br>
+&nbsp;&nbsp;&nbsp;&nbsp;email<br>
+&nbsp;&nbsp;&nbsp;&nbsp;gender<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dob<br>
+&nbsp;&nbsp;&nbsp;&nbsp;address<br>
+&nbsp;&nbsp;&nbsp;&nbsp;city<br>
+&nbsp;&nbsp;&nbsp;&nbsp;state<br>
+&nbsp;&nbsp;&nbsp;&nbsp;postcode<br>
+@return&nbsp;json&nbsp;object&nbsp;with&nbsp;elements:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;status<br>
+&nbsp;&nbsp;&nbsp;&nbsp;action</tt></dd></dl>
+ <dl><dt><a name="-delete_patient"><strong>delete_patient</strong></a>(patient_id)</dt><dd><tt>Delete&nbsp;a&nbsp;patient&nbsp;from&nbsp;the&nbsp;database<br>
+&nbsp;<br>
+@param&nbsp;patient_id&nbsp;integer&nbsp;patient&nbsp;id&nbsp;to&nbsp;be&nbsp;deleted<br>
+@return&nbsp;json&nbsp;object&nbsp;awith&nbsp;elements:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;status<br>
+&nbsp;&nbsp;&nbsp;&nbsp;action</tt></dd></dl>
+ <dl><dt><a name="-face_detected"><strong>face_detected</strong></a>(request)</dt><dd><tt>Add&nbsp;new&nbsp;patient&nbsp;to&nbsp;the&nbsp;queue&nbsp;when&nbsp;detected&nbsp;with&nbsp;camera<br>
+&nbsp;<br>
+@param&nbsp;request&nbsp;json&nbsp;object<br>
+&nbsp;&nbsp;&nbsp;&nbsp;patient&nbsp;with&nbsp;form&nbsp;firstname_lastname<br>
+&nbsp;<br>
+@return&nbsp;json&nbsp;object:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;data</tt></dd></dl>
+ <dl><dt><a name="-get_all_patients"><strong>get_all_patients</strong></a>()</dt><dd><tt>Return&nbsp;all&nbsp;patient's&nbsp;data&nbsp;in&nbsp;JSON&nbsp;format</tt></dd></dl>
+ <dl><dt><a name="-get_availability"><strong>get_availability</strong></a>(request)</dt><dd><tt>Return&nbsp;availability&nbsp;of&nbsp;doctors&nbsp;on&nbsp;certain&nbsp;day<br>
+&nbsp;<br>
+@param&nbsp;request&nbsp;json&nbsp;object&nbsp;with&nbsp;elements:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;date<br>
+&nbsp;&nbsp;&nbsp;&nbsp;doctorID<br>
+&nbsp;<br>
+@return&nbsp;json&nbsp;object:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;availability<br>
+&nbsp;&nbsp;&nbsp;&nbsp;busy&nbsp;[]</tt></dd></dl>
+ <dl><dt><a name="-get_doctors"><strong>get_doctors</strong></a>()</dt><dd><tt>Get&nbsp;all&nbsp;doctors&nbsp;for&nbsp;patients&nbsp;page&nbsp;selection<br>
+&nbsp;<br>
+@return&nbsp;json&nbsp;object&nbsp;with&nbsp;doctor&nbsp;details</tt></dd></dl>
+ <dl><dt><a name="-get_patient"><strong>get_patient</strong></a>(patient_id)</dt><dd><tt>Return&nbsp;a&nbsp;patient's&nbsp;data&nbsp;in&nbsp;JSON&nbsp;format<br>
+&nbsp;<br>
+@param&nbsp;patient_id&nbsp;is&nbsp;a&nbsp;integer&nbsp;patient&nbsp;id</tt></dd></dl>
+ <dl><dt><a name="-make_appointment"><strong>make_appointment</strong></a>(request)</dt><dd><tt>Add&nbsp;&nbsp;a&nbsp;new&nbsp;appointment&nbsp;to&nbsp;the&nbsp;database<br>
+Also&nbsp;creates&nbsp;a&nbsp;new&nbsp;appointment&nbsp;in&nbsp;the&nbsp;doctors&nbsp;calendar<br>
+&nbsp;<br>
+@param&nbsp;request&nbsp;json&nbsp;object&nbsp;with&nbsp;the&nbsp;elements:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;patient<br>
+&nbsp;&nbsp;&nbsp;&nbsp;startDate<br>
+&nbsp;&nbsp;&nbsp;&nbsp;endDate<br>
+&nbsp;&nbsp;&nbsp;&nbsp;doctor<br>
+&nbsp;&nbsp;&nbsp;&nbsp;description<br>
+&nbsp;&nbsp;&nbsp;&nbsp;summary<br>
+&nbsp;&nbsp;&nbsp;&nbsp;location<br>
+&nbsp;<br>
+@return&nbsp;json&nbsp;object&nbsp;with&nbsp;elements:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;status<br>
+&nbsp;&nbsp;&nbsp;&nbsp;action<br>
+&nbsp;&nbsp;&nbsp;&nbsp;id</tt></dd></dl>
+ <dl><dt><a name="-reset"><strong>reset</strong></a>()</dt><dd><tt>Used&nbsp;to&nbsp;reset&nbsp;the&nbsp;database&nbsp;if&nbsp;needed<br>
+&nbsp;<br>
+@return&nbsp;json&nbsp;object<br>
+&nbsp;&nbsp;&nbsp;&nbsp;data</tt></dd></dl>
+ <dl><dt><a name="-update_patient"><strong>update_patient</strong></a>(patient_id, data)</dt><dd><tt>Update&nbsp;a&nbsp;current&nbsp;patients&nbsp;data<br>
+&nbsp;<br>
+@param&nbsp;patient_id&nbsp;integer&nbsp;of&nbsp;the&nbsp;patient&nbsp;wishing&nbsp;to&nbsp;update<br>
+@param&nbsp;data&nbsp;json&nbsp;object&nbsp;with&nbsp;patient&nbsp;details<br>
+@returns&nbsp;json&nbsp;object&nbsp;with&nbsp;elements<br>
+&nbsp;&nbsp;&nbsp;&nbsp;status<br>
+&nbsp;&nbsp;&nbsp;&nbsp;action</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>app</strong> = &lt;Flask 'app'&gt;<br>
+<strong>db</strong> = &lt;SQLAlchemy engine=mysql://root:***@35.197.173.114/maps?charset=utf8&gt;<br>
+<strong>doctor_availability_schema</strong> = &lt;DoctorAvailabilitySchema(many=True, strict=False)&gt;<br>
+<strong>doctor_schema</strong> = &lt;DoctorSchema(many=True, strict=False)&gt;<br>
+<strong>ma</strong> = &lt;flask_marshmallow.Marshmallow object&gt;<br>
+<strong>patient_queue_schema</strong> = &lt;PatientQueueSchema(many=True, strict=False)&gt;<br>
+<strong>patient_schema</strong> = &lt;PatientSchema(many=True, strict=False)&gt;<br>
+<strong>request</strong> = &lt;LocalProxy unbound&gt;</td></tr></table>
+</body></html>

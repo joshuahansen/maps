@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module clerk</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>clerk</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/pi/maps/app/api/clerk.py">/home/pi/maps/app/api/clerk.py</a></font></td></tr></table>
+    <p><tt>##<br>
+#&nbsp;Medical&nbsp;Appointment&nbsp;System&nbsp;(MAPS)&nbsp;-&nbsp;IoT&nbsp;Sem2&nbsp;2018<br>
+#&nbsp;<br>
+#&nbsp;Clerk&nbsp;API&nbsp;file,&nbsp;handles&nbsp;all&nbsp;interactions&nbsp;with&nbsp;the&nbsp;cloud.<br>
+#<br>
+#&nbsp;Authors:&nbsp;Adam&nbsp;Young,&nbsp;Joshua&nbsp;Hansen,&nbsp;Lohgan&nbsp;Nash,&nbsp;Zach&nbsp;Wingrave<br>
+##</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="MySQLdb.html">MySQLdb</a><br>
+</td><td width="25%" valign=top><a href="oauth2client.client.html">oauth2client.client</a><br>
+</td><td width="25%" valign=top><a href="oauth2client.file.html">oauth2client.file</a><br>
+</td><td width="25%" valign=top><a href="oauth2client.tools.html">oauth2client.tools</a><br>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-add_appointment"><strong>add_appointment</strong></a>(request)</dt><dd><tt>Adds&nbsp;a&nbsp;new&nbsp;appointment&nbsp;to&nbsp;the&nbsp;calendar.<br>
+&nbsp;<br>
+@param&nbsp;request&nbsp;is&nbsp;a&nbsp;json&nbsp;data&nbsp;structure&nbsp;with&nbsp;the&nbsp;following&nbsp;elements:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;patientID<br>
+&nbsp;&nbsp;&nbsp;&nbsp;doctorID<br>
+&nbsp;&nbsp;&nbsp;&nbsp;startDateTime<br>
+&nbsp;&nbsp;&nbsp;&nbsp;endDateTime<br>
+&nbsp;&nbsp;&nbsp;&nbsp;summary<br>
+&nbsp;&nbsp;&nbsp;&nbsp;location<br>
+&nbsp;&nbsp;&nbsp;&nbsp;description<br>
+@return&nbsp;a&nbsp;json&nbsp;object&nbsp;containing&nbsp;success&nbsp;code&nbsp;and&nbsp;patient&nbsp;ID.</tt></dd></dl>
+ <dl><dt><a name="-delete_appointment_by_id"><strong>delete_appointment_by_id</strong></a>(request)</dt><dd><tt>Deletes&nbsp;an&nbsp;appointment&nbsp;in&nbsp;the&nbsp;calendar.<br>
+&nbsp;<br>
+@param&nbsp;request&nbsp;is&nbsp;a&nbsp;single&nbsp;variable&nbsp;representing&nbsp;the&nbsp;appointment&nbsp;ID.<br>
+@return&nbsp;a&nbsp;json&nbsp;object&nbsp;containing&nbsp;success&nbsp;code&nbsp;and&nbsp;appointment&nbsp;ID.</tt></dd></dl>
+ <dl><dt><a name="-get_appointments_by_doctor"><strong>get_appointments_by_doctor</strong></a>(request)</dt><dd><tt>Reads&nbsp;all&nbsp;appointments&nbsp;for&nbsp;a&nbsp;particular&nbsp;doctor.<br>
+&nbsp;<br>
+@param&nbsp;request&nbsp;is&nbsp;a&nbsp;single&nbsp;variable&nbsp;representing&nbsp;the&nbsp;doctor&nbsp;ID.<br>
+@return&nbsp;a&nbsp;json&nbsp;object&nbsp;containing&nbsp;all&nbsp;corresponding&nbsp;database&nbsp;records.</tt></dd></dl>
+ <dl><dt><a name="-get_appointments_by_id"><strong>get_appointments_by_id</strong></a>(request)</dt><dd><tt>Reads&nbsp;all&nbsp;appointments&nbsp;for&nbsp;a&nbsp;particular&nbsp;ID.<br>
+&nbsp;<br>
+@param&nbsp;request&nbsp;is&nbsp;a&nbsp;single&nbsp;variable&nbsp;representing&nbsp;the&nbsp;appointment&nbsp;ID.<br>
+@return&nbsp;a&nbsp;json&nbsp;object&nbsp;containing&nbsp;all&nbsp;corresponding&nbsp;database&nbsp;records.</tt></dd></dl>
+ <dl><dt><a name="-get_appointments_by_patient"><strong>get_appointments_by_patient</strong></a>(request)</dt><dd><tt>Reads&nbsp;all&nbsp;appointments&nbsp;for&nbsp;a&nbsp;particular&nbsp;patient.<br>
+&nbsp;<br>
+@param&nbsp;request&nbsp;is&nbsp;a&nbsp;single&nbsp;variable&nbsp;representing&nbsp;the&nbsp;patient&nbsp;ID.<br>
+@return&nbsp;a&nbsp;json&nbsp;object&nbsp;containing&nbsp;all&nbsp;corresponding&nbsp;database&nbsp;records.</tt></dd></dl>
+ <dl><dt><a name="-test"><strong>test</strong></a>()</dt><dd><tt>Tests&nbsp;the&nbsp;connection&nbsp;to&nbsp;this&nbsp;API.<br>
+&nbsp;<br>
+@param&nbsp;request&nbsp;is&nbsp;a&nbsp;single&nbsp;variable&nbsp;representing&nbsp;the&nbsp;appointment&nbsp;ID.<br>
+@return&nbsp;a&nbsp;json&nbsp;object&nbsp;containing&nbsp;success&nbsp;code&nbsp;and&nbsp;message.</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>app</strong> = &lt;Flask 'app'&gt;<br>
+<strong>appointment_schema</strong> = &lt;AppointmentSchema(many=True, strict=False)&gt;<br>
+<strong>db</strong> = &lt;SQLAlchemy engine=mysql://root:***@35.197.173.114/maps?charset=utf8&gt;<br>
+<strong>doctor_schema</strong> = &lt;DoctorSchema(many=True, strict=False)&gt;<br>
+<strong>ma</strong> = &lt;flask_marshmallow.Marshmallow object&gt;<br>
+<strong>patient_schema</strong> = &lt;PatientSchema(many=True, strict=False)&gt;<br>
+<strong>request</strong> = &lt;LocalProxy unbound&gt;</td></tr></table>
+</body></html>
