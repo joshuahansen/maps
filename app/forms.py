@@ -92,10 +92,12 @@ def maps_appointment(config):
         formwithtime.time.choices = time_list
 
         # Use values given to us previously
+        formwithtime.patient.default = patient
         formwithtime.doctor.default = doctor
         formwithtime.date.default = date
 
         # Disabled the fields above time
+        formwithtime.patient.render_kw={'readonly':''}
         formwithtime.doctor.render_kw={'readonly':''}
         formwithtime.date.render_kw={'readonly':''}
 
@@ -110,6 +112,7 @@ def maps_appointment_confirmation(config):
     doctor_list = doctors_list(config['MAPS_API_BASE_URL'])
     form.doctor.choices = doctor_list
 
+    patient = form.patient.data
     doctor = form.doctor.data
     date = form.date.data
 
